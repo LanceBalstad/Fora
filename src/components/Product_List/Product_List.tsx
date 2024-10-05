@@ -1,4 +1,5 @@
 import React from "react";
+import "./Product_List.css";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -18,7 +19,7 @@ interface Product {
   name: string;
   purchaseDate: string;
   purchaseCost: number;
-  sellingCost: number;
+  quality: string;
 }
 
 function Product_List() {
@@ -40,7 +41,7 @@ function Product_List() {
   const [newProductName, setNewProductName] = useState("");
   const [newPurchaseDate, setNewPurchaseDate] = useState("");
   const [newPurchaseCost, setNewPurchaseCost] = useState(0);
-  const [newSellingCost, setNewSellingCost] = useState(0);
+  const [newQuality, setNewQuality] = useState(0);
 
   const [updatedName, setUpdatedName] = useState("");
 
@@ -101,7 +102,7 @@ function Product_List() {
         name: newProductName,
         purchaseDate: newPurchaseDate,
         purchaseCost: newPurchaseCost,
-        sellingCost: newSellingCost,
+        quality: newQuality,
         userId: auth?.currentUser?.uid,
       });
 
@@ -131,35 +132,45 @@ function Product_List() {
           placeholder="Purchase Cost..."
           onChange={(e) => setNewPurchaseCost(Number(e.target.value))}
         />
-        <input
-          type="number"
-          placeholder="Selling Cost..."
-          onChange={(e) => setNewSellingCost(Number(e.target.value))}
-        />
         <button onClick={onSubmitProduct}>Submit Product</button>
       </div>
 
-      <div>
-        {productList.map((product) => (
-          <div key={product.id}>
-            <h1>{product.name}</h1>
-            <p>{product.purchaseDate}</p>
-            <p>{product.purchaseCost}</p>
-            <p>{product.sellingCost}</p>
-            <button onClick={() => deleteProduct(product.id)}>
-              Delete Product
-            </button>
-
-            <input
-              type="text"
-              placeholder="new name..."
-              onChange={(e) => setUpdatedName(e.target.value)}
-            />
-            <button onClick={() => updateProductName(product.id)}>
-              Update Name
-            </button>
-          </div>
-        ))}
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th># of Product</th>
+              <th>Quality</th>
+              <th>Purchase Date</th>
+              <th>purchase Cost</th>
+              <th>Total Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productList.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>Num of product</td>
+                <td>{product.quality}</td>
+                <td>{product.purchaseDate}</td>
+                <td>{product.purchaseCost}</td>
+                <td>{product.purchaseCost}</td>
+                <td>
+                  <div className="button-container">
+                    <button onClick={() => deleteProduct(product.id)}>X</button>
+                    <button
+                      onClick={() => updateProductName(product.id)}
+                      className="table-actions"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );

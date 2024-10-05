@@ -1,0 +1,39 @@
+/* ProductTable.css */
+.table-container {
+    padding-top: 5%;
+    max-height: 100%;
+    overflow-y: auto;
+    width: 95%;  /* Width of the table container */
+    margin: 0 auto;  /* Centers the table-container */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table-actions {
+    margin-left: 8px;
+  }
+  
+  /* ProductTable.css */
+.button-container {
+    display: flex;
+    gap: 10px; /* Adjust the spacing between buttons */
+    max-width: 50px;
+  }
+  
+  button {
+    padding: 6px 12px;
+    cursor: pointer;    
+  }
+  
+  .table-actions {
+    margin-left: 0; /* No need for margin-left anymore */
+  }
