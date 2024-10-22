@@ -1,7 +1,5 @@
 import React from "react";
 import "./Product_List.css";
-import { Link, useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { db, auth } from "../../config/Firebase";
 import { query, where } from "firebase/firestore";
@@ -23,18 +21,8 @@ interface Product {
 }
 
 function Product_List() {
+  // Remove when done
   console.log(auth.currentUser?.uid);
-
-  const navigate = useNavigate();
-
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const [productList, setProductList] = useState<Product[]>([]);
 
@@ -115,7 +103,6 @@ function Product_List() {
   return (
     <>
       <div>Product_List</div>
-      <button onClick={logout}>Logout</button>
       <div>
         <input
           type="text"
