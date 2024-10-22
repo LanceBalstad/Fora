@@ -27,15 +27,6 @@ function Product_List() {
 
   const navigate = useNavigate();
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const [productList, setProductList] = useState<Product[]>([]);
 
   const [newProductName, setNewProductName] = useState("");
@@ -115,7 +106,6 @@ function Product_List() {
   return (
     <>
       <div>Product_List</div>
-      <button onClick={logout}>Logout</button>
       <div>
         <input
           type="text"
