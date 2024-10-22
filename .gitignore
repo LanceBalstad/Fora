@@ -1,5 +1,5 @@
 # Manually ignore
-/config/Firebase.tsx
+/src/config/Firebase.tsx
 
 # Logs
 logs
