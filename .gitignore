@@ -1,3 +1,6 @@
+# Manually ignore
+/config/Firebase.tsx
+
 # Logs
 logs
 *.log
