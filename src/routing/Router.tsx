@@ -3,12 +3,12 @@ import {
   createBrowserRouter,
   Navigate,
 } from "react-router-dom";
-import { Login } from "./components/Login/Login";
-import Create_Account from "./components/Create_Account/Create_Account";
-import Import_Products from "./components/Import_Products/Import_Products";
-import { auth } from "./config/Firebase";
-import Product_List from "./components/Product_List/Product_List";
-import Layout from "./Layout"; // Import the Layout component
+import { Login } from "../components/Login/Login";
+import Create_Account from "../components/Create_Account/Create_Account";
+import Import_Products from "../components/Import_Products/Import_Products";
+import { auth } from "../config/Firebase";
+import Product_List from "../components/Product_List/Product_List";
+import Layout from "./Layout";
 
 const isAuthenticated = () => {
   return auth.currentUser?.uid != null;
