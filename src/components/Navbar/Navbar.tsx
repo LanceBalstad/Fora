@@ -1,6 +1,6 @@
 import React from "react";
 import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../config/Firebase";
 
 const Navbar = () => {
@@ -15,9 +15,19 @@ const Navbar = () => {
     }
   };
 
+  const goToImport_Products = async () => {
+    try {
+      navigate("/import_products");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <button onClick={logout}>Logout</button>
+      <Link to="/product_list">Product List</Link>
+      <Link to="/import_products">Import Products through an Excel Sheet</Link>
     </>
   );
 };

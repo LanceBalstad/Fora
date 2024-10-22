@@ -5,9 +5,10 @@ import {
 } from "react-router-dom";
 import { Login } from "./components/Login/Login";
 import Create_Account from "./components/Create_Account/Create_Account";
-import { db, auth } from "./config/Firebase";
+import Import_Products from "./components/Import_Products/Import_Products";
+import { auth } from "./config/Firebase";
 import Product_List from "./components/Product_List/Product_List";
-import Navbar from "./components/Navbar/Navbar";
+import Layout from "./Layout"; // Import the Layout component
 
 const isAuthenticated = () => {
   return auth.currentUser?.uid != null;
@@ -22,13 +23,19 @@ export const Router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/create_account", element: <Create_Account /> },
   {
+    path: "/import_products",
+    element: (
+      <Layout>
+        <Import_Products />
+      </Layout>
+    ),
+  },
+  {
     path: "/product_list",
     element: (
-      <>
-        <Navbar />{" "}
-        {/* Include Navbar here to ensure it's always rendered on this route */}
+      <Layout>
         <Product_List />
-      </>
+      </Layout>
     ),
   },
 ]);
