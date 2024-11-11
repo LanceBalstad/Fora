@@ -2,15 +2,7 @@ import React from "react";
 import "./Product_List.css";
 import { useEffect, useState } from "react";
 import { db, auth } from "../../config/Firebase";
-import { query, where } from "firebase/firestore";
-import {
-  getDocs,
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { query, where, getDocs, collection, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 interface Product {
   id: string;
@@ -21,18 +13,12 @@ interface Product {
 }
 
 function Product_List() {
-  // Remove when done
-  console.log(auth.currentUser?.uid);
-
   const [productList, setProductList] = useState<Product[]>([]);
-
   const [newProductName, setNewProductName] = useState("");
   const [newPurchaseDate, setNewPurchaseDate] = useState("");
   const [newPurchaseCost, setNewPurchaseCost] = useState(0);
   const [newQuality, setNewQuality] = useState(0);
-
   const [updatedName, setUpdatedName] = useState("");
-
   const productsCollectionRef = collection(db, "products");
 
   const getProductList = async () => {
@@ -65,24 +51,29 @@ function Product_List() {
     }
   };
 
-  const updateProductName = async (id: string) => {
+  const deleteAllProducts = async () => {
     try {
-      const productDoc = doc(db, "products", id);
-      await updateDoc(productDoc, { name: updatedName });
-      // Update the state to reflect the change
-      setProductList((prev) =>
-        prev.map((product) =>
-          product.id === id ? { ...product, name: updatedName } : product
-        )
+      const userUid = auth.currentUser?.uid;
+      if (!userUid) {
+        console.error("User is not authenticated");
+        return;
+      }
+
+      const queriedData = query(
+        productsCollectionRef,
+        where("userId", "==", userUid)
       );
+      const data = await getDocs(queriedData);
+      
+      const deletePromises = data.docs.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+
+      setProductList([]);
+      console.log("All products deleted successfully!");
     } catch (err) {
-      console.error(err);
+      console.error("Error deleting all products:", err);
     }
   };
-
-  useEffect(() => {
-    getProductList();
-  }, []);
 
   const onSubmitProduct = async () => {
     try {
@@ -93,12 +84,15 @@ function Product_List() {
         quality: newQuality,
         userId: auth?.currentUser?.uid,
       });
-
       getProductList();
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    getProductList();
+  }, []);
 
   return (
     <>
@@ -120,6 +114,9 @@ function Product_List() {
           onChange={(e) => setNewPurchaseCost(Number(e.target.value))}
         />
         <button onClick={onSubmitProduct}>Submit Product</button>
+        <button onClick={deleteAllProducts} style={{ marginLeft: "10px", color: "red" }}>
+          Delete All Products
+        </button>
       </div>
 
       <div className="table-container">
@@ -130,7 +127,7 @@ function Product_List() {
               <th># of Product</th>
               <th>Quality</th>
               <th>Purchase Date</th>
-              <th>purchase Cost</th>
+              <th>Purchase Cost</th>
               <th>Total Cost</th>
             </tr>
           </thead>
@@ -147,7 +144,7 @@ function Product_List() {
                   <div className="button-container">
                     <button onClick={() => deleteProduct(product.id)}>X</button>
                     <button
-                      onClick={() => updateProductName(product.id)}
+                      //onClick={() => updateProductName(product.id)}
                       className="table-actions"
                     >
                       Edit

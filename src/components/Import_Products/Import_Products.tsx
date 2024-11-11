@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
+import { db, auth } from "../../config/Firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Import_Products() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [items, setItems] = useState<any[]>([]);
+  const navigate = useNavigate(); // Initialize navigate
+
+  const productsCollectionRef = collection(db, "products");
 
   const readExcel = (file: File) => {
     const fileReader = new FileReader();
@@ -11,30 +17,25 @@ function Import_Products() {
 
     fileReader.onload = (e: ProgressEvent<FileReader>) => {
       const bufferArray = e.target?.result as ArrayBuffer;
-
       const wb = XLSX.read(bufferArray, { type: "buffer" });
-
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
 
-      // Convert the sheet to JSON where the first row is used as headers
       const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
       if (data.length > 0) {
-        // The first row contains headers
         const fileHeaders = data[0];
-        setHeaders(fileHeaders); // Store the headers
+        setHeaders(fileHeaders);
 
-        // Slice the data to skip the first row (headers)
         const itemsData = data.slice(1).map((row) => {
           const rowData: any = {};
           fileHeaders.forEach((header: string, index: number) => {
-            rowData[header] = row[index]; // Dynamically assign values
+            rowData[header] = row[index];
           });
           return rowData;
         });
 
-        setItems(itemsData); // Store the rows of data
+        setItems(itemsData);
       }
     };
 
@@ -42,6 +43,62 @@ function Import_Products() {
       console.error("Error reading file:", error);
     };
   };
+
+  // const uploadItemsToDatabase = async () => {
+  //   try {
+  //     const userUid = auth.currentUser?.uid;
+  //     if (!userUid) {
+  //       console.error("User is not authenticated");
+  //       return;
+  //     }
+
+  //     for (const item of items) {
+  //       // Skip rows that are completely empty
+  //       // if (Object.values(item).every(value => value === null || value === undefined || value === "")) {
+  //       //   continue;
+  //       // }
+
+  //       console.log("adding products");
+  //       await addDoc(productsCollectionRef, {
+  //         ...item,
+  //         userId: userUid,
+  //       });
+  //     }
+
+  //     console.log("Items added to Firestore successfully!");
+  //     navigate("/product_list"); // Redirect to Product List page
+  //   } catch (err) {
+  //     console.error("Error adding items to Firestore:", err);
+  //   }
+  // };
+
+  const uploadItemsToDatabase = async () => {
+    try {
+      const userUid = auth.currentUser?.uid;
+      if (!userUid) {
+        console.error("User is not authenticated");
+        return;
+      }
+  
+      for (const item of items) {
+        // Remove any undefined values from the item object
+        const sanitizedItem = Object.fromEntries(
+          Object.entries(item).filter(([_, value]) => value !== undefined)
+        );
+  
+        await addDoc(productsCollectionRef, {
+          ...sanitizedItem,
+          userId: userUid,
+        });
+      }
+  
+      console.log("Items added to Firestore successfully!");
+      navigate("/product_list"); // Redirect to Product List page
+    } catch (err) {
+      console.error("Error adding items to Firestore:", err);
+    }
+  };
+  
 
   return (
     <div>
@@ -54,6 +111,7 @@ function Import_Products() {
           }
         }}
       />
+      <button onClick={uploadItemsToDatabase}>Upload to Firestore</button>
 
       <table className="table container">
         <thead>
