@@ -6,19 +6,13 @@ import { query, where, getDocs, collection, addDoc, deleteDoc, doc, updateDoc } 
 
 interface Product {
   id: string;
-  name: string;
-  purchaseDate: string;
-  purchaseCost: number;
-  quality: string;
+  [key: string]: any; // Allows for dynamic properties in each product
 }
 
 function Product_List() {
   const [productList, setProductList] = useState<Product[]>([]);
-  const [newProductName, setNewProductName] = useState("");
-  const [newPurchaseDate, setNewPurchaseDate] = useState("");
-  const [newPurchaseCost, setNewPurchaseCost] = useState(0);
-  const [newQuality, setNewQuality] = useState(0);
-  const [updatedName, setUpdatedName] = useState("");
+  const [headers, setHeaders] = useState<string[]>([]);
+
   const productsCollectionRef = collection(db, "products");
 
   const getProductList = async () => {
@@ -28,14 +22,22 @@ function Product_List() {
 
       const queriedData = query(
         productsCollectionRef,
-        where("userId", "==", userUid.toString())
+        where("userId", "==", userUid)
       );
       const data = await getDocs(queriedData);
+      
       const filteredData = data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       })) as Product[];
+
       setProductList(filteredData);
+
+      // Extract headers dynamically, excluding 'userId' and 'id'
+      const dynamicHeaders = Object.keys(filteredData[0] || {}).filter(
+        (header) => header !== "userId" && header !== "id"
+      );
+      setHeaders(dynamicHeaders);
     } catch (err) {
       console.error(err);
     }
@@ -75,20 +77,20 @@ function Product_List() {
     }
   };
 
-  const onSubmitProduct = async () => {
-    try {
-      await addDoc(productsCollectionRef, {
-        name: newProductName,
-        purchaseDate: newPurchaseDate,
-        purchaseCost: newPurchaseCost,
-        quality: newQuality,
-        userId: auth?.currentUser?.uid,
-      });
-      getProductList();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const onSubmitProduct = async () => {
+  //   try {
+  //     await addDoc(productsCollectionRef, {
+  //       name: newProductName,
+  //       purchaseDate: newPurchaseDate,
+  //       purchaseCost: newPurchaseCost,
+  //       quality: newQuality,
+  //       userId: auth?.currentUser?.uid,
+  //     });
+  //     getProductList();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   useEffect(() => {
     getProductList();
@@ -96,60 +98,29 @@ function Product_List() {
 
   return (
     <>
-      <div>Product_List</div>
-      <div>
-        <input
-          type="text"
-          placeholder="Product Name..."
-          onChange={(e) => setNewProductName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Purchase Date..."
-          onChange={(e) => setNewPurchaseDate(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Purchase Cost..."
-          onChange={(e) => setNewPurchaseCost(Number(e.target.value))}
-        />
-        <button onClick={onSubmitProduct}>Submit Product</button>
-        <button onClick={deleteAllProducts} style={{ marginLeft: "10px", color: "red" }}>
-          Delete All Products
-        </button>
-      </div>
-
+      <button onClick={deleteAllProducts} style={{ marginLeft: "10px", color: "red" }}>
+        Delete All Products
+      </button>
+      <div>Product List</div>
       <div className="table-container">
         <table className="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th># of Product</th>
-              <th>Quality</th>
-              <th>Purchase Date</th>
-              <th>Purchase Cost</th>
-              <th>Total Cost</th>
+              {headers.map((header, index) => (
+                <th key={index}>{header}</th>
+              ))}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {productList.map((product) => (
               <tr key={product.id}>
-                <td>{product.name}</td>
-                <td>Num of product</td>
-                <td>{product.quality}</td>
-                <td>{product.purchaseDate}</td>
-                <td>{product.purchaseCost}</td>
-                <td>{product.purchaseCost}</td>
+                {headers.map((header, index) => (
+                  <td key={index}>{product[header]}</td>
+                ))}
                 <td>
-                  <div className="button-container">
-                    <button onClick={() => deleteProduct(product.id)}>X</button>
-                    <button
-                      //onClick={() => updateProductName(product.id)}
-                      className="table-actions"
-                    >
-                      Edit
-                    </button>
-                  </div>
+                  <button onClick={() => deleteProduct(product.id)}>Delete</button>
+                  <button>Edit</button>
                 </td>
               </tr>
             ))}
