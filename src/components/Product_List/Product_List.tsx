@@ -1,8 +1,16 @@
-import React from "react";
-import "./Product_List.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db, auth } from "../../config/Firebase";
-import { query, where, getDocs, collection, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  query,
+  where,
+  getDocs,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+  addDoc,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface Product {
   id: string;
@@ -12,20 +20,20 @@ interface Product {
 function Product_List() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [editedProductData, setEditedProductData] = useState<Product | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const productsCollectionRef = collection(db, "products");
 
-  const getProductList = async () => {
+  const getProductList = async (userUid: string) => {
     try {
-      const userUid = auth.currentUser?.uid;
-      if (!userUid) return;
-
       const queriedData = query(
         productsCollectionRef,
         where("userId", "==", userUid)
       );
       const data = await getDocs(queriedData);
-      
+
       const filteredData = data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
@@ -33,15 +41,31 @@ function Product_List() {
 
       setProductList(filteredData);
 
-      // Extract headers dynamically, excluding 'userId' and 'id'
-      const dynamicHeaders = Object.keys(filteredData[0] || {}).filter(
-        (header) => header !== "userId" && header !== "id"
-      );
-      setHeaders(dynamicHeaders);
+      // Initialize headers only if not already set
+      if (headers.length === 0) {
+        const allHeaders = Array.from(
+          new Set(
+            filteredData.flatMap((product) =>
+              Object.keys(product).filter((key) => key !== "userId" && key !== "id")
+            )
+          )
+        );
+        setHeaders(allHeaders);
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching product list:", err);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        getProductList(user.uid);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const deleteProduct = async (id: string) => {
     try {
@@ -66,7 +90,7 @@ function Product_List() {
         where("userId", "==", userUid)
       );
       const data = await getDocs(queriedData);
-      
+
       const deletePromises = data.docs.map((doc) => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
 
@@ -77,50 +101,120 @@ function Product_List() {
     }
   };
 
-  // const onSubmitProduct = async () => {
-  //   try {
-  //     await addDoc(productsCollectionRef, {
-  //       name: newProductName,
-  //       purchaseDate: newPurchaseDate,
-  //       purchaseCost: newPurchaseCost,
-  //       quality: newQuality,
-  //       userId: auth?.currentUser?.uid,
-  //     });
-  //     getProductList();
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+  const toggleEdit = (productId: string) => {
+    if (editingProductId === productId) {
+      saveProduct(productId);
+    } else {
+      setEditingProductId(productId);
+      const productToEdit = productList.find(
+        (product) => product.id === productId
+      );
+      setEditedProductData(productToEdit || null);
+    }
+  };
 
-  useEffect(() => {
-    getProductList();
-  }, []);
+  const saveProduct = async (productId: string) => {
+    if (!editedProductData) return;
+
+    try {
+      const userUid = auth.currentUser?.uid;
+      if (!userUid) return;
+
+      if (productId === "new") {
+        // Add new product
+        await addDoc(productsCollectionRef, {
+          ...editedProductData,
+          userId: userUid,
+        });
+      } else {
+        // Update existing product
+        const productDoc = doc(db, "products", productId);
+        await updateDoc(productDoc, editedProductData);
+      }
+
+      getProductList(userUid);
+      setEditingProductId(null);
+      setEditedProductData(null);
+    } catch (err) {
+      console.error("Error saving product:", err);
+    }
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setEditedProductData((prevData) => ({
+      ...(prevData || { id: "" }),
+      [field]: value,
+    }));
+  };
+
+  const addNewProduct = () => {
+    const newProduct: Product = { id: "new" };
+    headers.forEach((header) => {
+      newProduct[header] = ""; // Initialize all fields as empty
+    });
+    setProductList((prev) => [newProduct, ...prev]);
+    setEditingProductId("new");
+    setEditedProductData(newProduct);
+  };
+
+  const filteredProducts = productList.filter((product) =>
+    headers.some(
+      (header) =>
+        product[header]
+          ?.toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ?? false
+    )
+  );
 
   return (
     <>
-      <button onClick={deleteAllProducts} style={{ marginLeft: "10px", color: "red" }}>
-        Delete All Products
-      </button>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <button onClick={addNewProduct}>Add Product</button>
+      <button onClick={deleteAllProducts}>Delete All Products</button>
       <div>Product List</div>
-      <div className="table-container">
-        <table className="table">
-          <thead>
+      <div className="table container">
+        <table className="table table-striped">
+          <thead className="thead-light">
             <tr>
               {headers.map((header, index) => (
-                <th key={index}>{header}</th>
+                <th scope="col" key={index}>
+                  {header}
+                </th>
               ))}
-              <th>Actions</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {productList.map((product) => (
+            {filteredProducts.map((product) => (
               <tr key={product.id}>
                 {headers.map((header, index) => (
-                  <td key={index}>{product[header]}</td>
+                  <td key={index}>
+                    {editingProductId === product.id ? (
+                      <input
+                        type="text"
+                        value={editedProductData ? editedProductData[header] : ""}
+                        onChange={(e) => handleFieldChange(header, e.target.value)}
+                      />
+                    ) : (
+                      product[header]
+                    )}
+                  </td>
                 ))}
                 <td>
-                  <button onClick={() => deleteProduct(product.id)}>Delete</button>
-                  <button>Edit</button>
+                  <div style={{ display: "flex", gap: "5px" }}>
+                    <button onClick={() => toggleEdit(product.id)}>
+                      {editingProductId === product.id ? "Save" : "Edit"}
+                    </button>
+                    {product.id !== "new" && (
+                      <button onClick={() => deleteProduct(product.id)}>Delete</button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
