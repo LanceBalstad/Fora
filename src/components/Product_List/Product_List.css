@@ -1,39 +1,62 @@
-/* ProductTable.css */
-.table-container {
-    padding-top: 5%;
-    max-height: 100%;
-    overflow-y: auto;
-    width: 95%;  /* Width of the table container */
-    margin: 0 auto;  /* Centers the table-container */
+/* Action Buttons in Rows - Positioned side by side */
+.tableactions {
+  display: flex;
+  justify-content: flex-start; /* Align to the left */
+  align-items: center;
+  gap: 15px; /* Space between elements */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* Search Input Styling */
+.search-input {
+  padding: 8px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+  margin-right: 20px; /* Space between search input and buttons */
+  outline: none;
+}
+
+/* Table Row Styling */
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Styling for Table Input Fields */
+.table td input {
+  width: 100%; /* Ensure the input takes up the full width of the cell */
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Table Headers Styling */
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+  /* Logout button */
+  .changeProductButton {
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 20%;
+    transition: background-color 0.3s, transform 0.2s;
   }
   
-  .table {
-    width: 100%;
-    border-collapse: collapse;
+  .changeProductButton:hover {
+    transform: scale(1.05);
   }
   
-  .table th, .table td {
-    text-align: left;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .table-actions {
-    margin-left: 8px;
-  }
-  
-  /* ProductTable.css */
-.button-container {
-    display: flex;
-    gap: 10px; /* Adjust the spacing between buttons */
-    max-width: 50px;
-  }
-  
-  button {
-    padding: 6px 12px;
-    cursor: pointer;    
-  }
-  
-  .table-actions {
-    margin-left: 0; /* No need for margin-left anymore */
+  .changeProductButton:active {
+    transform: scale(1);
   }

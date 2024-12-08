@@ -11,6 +11,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import "./Product_List.css";
 
 interface Product {
   id: string;
@@ -115,15 +116,16 @@ function Product_List() {
 
   const saveProduct = async (productId: string) => {
     if (!editedProductData) return;
-
+  
     try {
       const userUid = auth.currentUser?.uid;
       if (!userUid) return;
-
+  
       if (productId === "new") {
-        // Add new product
+        // Exclude the `id` field before adding
+        const { id, ...productData } = editedProductData;
         await addDoc(productsCollectionRef, {
-          ...editedProductData,
+          ...productData,
           userId: userUid,
         });
       } else {
@@ -131,14 +133,14 @@ function Product_List() {
         const productDoc = doc(db, "products", productId);
         await updateDoc(productDoc, editedProductData);
       }
-
+  
       getProductList(userUid);
       setEditingProductId(null);
       setEditedProductData(null);
     } catch (err) {
       console.error("Error saving product:", err);
     }
-  };
+  };  
 
   const handleFieldChange = (field: string, value: string) => {
     setEditedProductData((prevData) => ({
@@ -169,14 +171,21 @@ function Product_List() {
 
   return (
     <>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <button onClick={addNewProduct}>Add Product</button>
-      <button onClick={deleteAllProducts}>Delete All Products</button>
+      <div className="tableactions">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+        <button onClick={addNewProduct} className="changeProductButton">
+          Add Product
+        </button>
+        <button onClick={deleteAllProducts} className="changeProductButton">
+          Delete All Products
+        </button>
+      </div>
       <div>Product List</div>
       <div className="table container">
         <table className="table table-striped">
