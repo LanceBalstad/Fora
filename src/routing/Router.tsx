@@ -8,6 +8,7 @@ import Create_Account from "../components/Create_Account/Create_Account";
 import Import_Products from "../components/Import_Products/Import_Products";
 import { auth } from "../config/Firebase";
 import Product_List from "../components/Product_List/Product_List";
+import OpenAI_Helper from "../components/OpenAI_Helper/OpenAI_Helper";
 import Layout from "./Layout";
 
 const isAuthenticated = () => {
@@ -35,6 +36,14 @@ export const Router = createBrowserRouter([
     element: (
       <Layout>
         <Product_List />
+      </Layout>
+    ),
+  },
+  {
+    path: "/openai_helper",
+    element: (
+      <Layout>
+        <OpenAI_Helper />
       </Layout>
     ),
   },
