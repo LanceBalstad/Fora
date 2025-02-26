@@ -25,9 +25,6 @@ const Navbar = () => {
         <Link to="/import_products" className="nav-link">
           Import Products
         </Link>
-        <Link to="/openai_helper" className="nav-link">
-          AI Helper
-        </Link>
       </div>
       <button onClick={logout} className="logout-button">
         Logout

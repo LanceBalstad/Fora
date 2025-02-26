@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import OpenAI_Helper from "../OpenAI_Helper/OpenAI_Helper";
 import { db, auth } from "../../config/Firebase";
 import {
   query,
@@ -22,7 +23,9 @@ function Product_List() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editedProductData, setEditedProductData] = useState<Product | null>(null);
+  const [editedProductData, setEditedProductData] = useState<Product | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const productsCollectionRef = collection(db, "products");
@@ -47,7 +50,9 @@ function Product_List() {
         const allHeaders = Array.from(
           new Set(
             filteredData.flatMap((product) =>
-              Object.keys(product).filter((key) => key !== "userId" && key !== "id")
+              Object.keys(product).filter(
+                (key) => key !== "userId" && key !== "id"
+              )
             )
           )
         );
@@ -116,11 +121,11 @@ function Product_List() {
 
   const saveProduct = async (productId: string) => {
     if (!editedProductData) return;
-  
+
     try {
       const userUid = auth.currentUser?.uid;
       if (!userUid) return;
-  
+
       if (productId === "new") {
         // Exclude the `id` field before adding
         const { id, ...productData } = editedProductData;
@@ -133,14 +138,14 @@ function Product_List() {
         const productDoc = doc(db, "products", productId);
         await updateDoc(productDoc, editedProductData);
       }
-  
+
       getProductList(userUid);
       setEditingProductId(null);
       setEditedProductData(null);
     } catch (err) {
       console.error("Error saving product:", err);
     }
-  };  
+  };
 
   const handleFieldChange = (field: string, value: string) => {
     setEditedProductData((prevData) => ({
@@ -171,6 +176,9 @@ function Product_List() {
 
   return (
     <>
+      {/* Add OpenAI_Helper here, passing the productList and headers (columns) */}
+      <OpenAI_Helper productList={productList} columns={headers} />
+
       <div className="tableactions">
         <input
           type="text"
@@ -207,8 +215,12 @@ function Product_List() {
                     {editingProductId === product.id ? (
                       <input
                         type="text"
-                        value={editedProductData ? editedProductData[header] : ""}
-                        onChange={(e) => handleFieldChange(header, e.target.value)}
+                        value={
+                          editedProductData ? editedProductData[header] : ""
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(header, e.target.value)
+                        }
                       />
                     ) : (
                       product[header]
@@ -221,7 +233,9 @@ function Product_List() {
                       {editingProductId === product.id ? "Save" : "Edit"}
                     </button>
                     {product.id !== "new" && (
-                      <button onClick={() => deleteProduct(product.id)}>Delete</button>
+                      <button onClick={() => deleteProduct(product.id)}>
+                        Delete
+                      </button>
                     )}
                   </div>
                 </td>

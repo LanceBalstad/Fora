@@ -7,13 +7,34 @@ interface Message {
   message: string;
 }
 
-const OpenAI_Helper = () => {
+interface OpenAI_HelperProps {
+  productList: any[];
+  columns: string[];
+}
+
+const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
+  productList,
+  columns,
+}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   const apiKey = import.meta.env.VITE_API_KEY;
+
+  // Construct product information message (only for internal use)
+  const getProductContext = () => {
+    if (!productList.length) {
+      return "The user has no products in their inventory.";
+    }
+
+    return `The user has the following products:\n${productList
+      .map((product) =>
+        columns.map((col) => `${col}: ${product[col]}`).join(", ")
+      )
+      .join("\n")}`;
+  };
 
   const sendMessage = async () => {
     if (!userInput.trim()) return;
@@ -28,7 +49,11 @@ const OpenAI_Helper = () => {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant and your name is Gabby.",
+          content: `You are a helpful assistant named Gabby. The user manages a product inventory.
+                    The product list contains the following columns: ${columns.join(
+                      ", "
+                    )}.
+                    ${getProductContext()} Use this information to help the user with product-related queries.`,
         },
         { role: "user", content: userInput },
       ],
