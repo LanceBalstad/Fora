@@ -18,7 +18,8 @@ export const Login = () => {
     }
   };
 
-  const login = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); // this will prevent page reload
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/product_list");
@@ -33,25 +34,27 @@ export const Login = () => {
         <div className="form-box">
           <div className="form">
             <h2>Login</h2>
-            <div className="inputbox">
-              <input
-                type="text"
-                placeholder="Email..."
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <label htmlFor="">Email Address</label>
-            </div>
-            <div className="inputbox">
-              <input
-                type="password"
-                placeholder="Password..."
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <label htmlFor="">Password</label>
-            </div>
-            <button onClick={login}>Login to my account</button>
+            <form onSubmit={handleLogin}>
+              <div className="inputbox">
+                <input
+                  type="text"
+                  placeholder="Email..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <label htmlFor="">Email Address</label>
+              </div>
+              <div className="inputbox">
+                <input
+                  type="password"
+                  placeholder="Password..."
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <label htmlFor="">Password</label>
+              </div>
+              <button type="submit">Login to my account</button>
+            </form>
             <button onClick={signInWithGoogle}>Sign in with Google</button>
             <span>Dont have an account? </span>
             <Link to="/create_account">Create Account</Link>

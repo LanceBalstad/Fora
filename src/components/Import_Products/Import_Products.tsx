@@ -29,15 +29,20 @@ function Import_Products() {
         const fileHeaders = data[0];
         setHeaders(fileHeaders);
 
-        const itemsData = data.slice(1).map((row) => {
-          const rowData: any = {};
-          fileHeaders.forEach((header: string, index: number) => {
-            rowData[header] = row[index];
+        const itemsData = data
+          .slice(1)
+          .map((row) => {
+            const rowData: any = {};
+            fileHeaders.forEach((header: string, index: number) => {
+              rowData[header] = row[index];
+            });
+            return rowData;
+          })
+          .filter((rowData) => {
+            return Object.values(rowData).some(
+              (value) => value !== null && value !== undefined && value !== ""
+            );
           });
-          return rowData;
-        }).filter((rowData) => {
-          return Object.values(rowData).some(value => value !== null && value !== undefined && value !== "");
-        });
 
         setItems(itemsData);
       }
@@ -80,8 +85,8 @@ function Import_Products() {
 
   return (
     <div>
-      {loading && <Loading_Screen message="Uploading products..." />} {/* Show loading screen */}
-      
+      {loading && <Loading_Screen message="Uploading products..." />}{" "}
+      {/* Show loading screen */}
       <input
         type="file"
         onChange={(e) => {
@@ -91,10 +96,11 @@ function Import_Products() {
           }
         }}
       />
-      <button onClick={uploadItemsToDatabase} disabled={loading}> {/* Disable button while loading */}
+      <button onClick={uploadItemsToDatabase} disabled={loading}>
+        {" "}
+        {/* Disable button while loading */}
         Upload to Firestore
       </button>
-
       <table className="table container">
         <thead>
           <tr>
