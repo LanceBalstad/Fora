@@ -1,17 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { db, auth } from "../../config/Firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import Loading_Screen from "../Loading_Screen/Loading_Screen"; // Import Loading_Screen
+import Loading_Screen from "../Loading_Screen/Loading_Screen";
+import { getProductsCollectionRef } from "../../utils/firestorePaths";
 
 function Import_Products() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const productsCollectionRef = collection(db, "products");
+  // Retrieve tableId from localStorage directly
+  const [tableId] = useState<string | null>(
+    localStorage.getItem("activeTableId")
+  );
+
+  const [productsCollectionRef, setProductsCollectionRef] = useState<any>(null);
+
+  useEffect(() => {
+    if (tableId) {
+      const userUid = auth.currentUser?.uid;
+      if (userUid) {
+        const collectionRef = getProductsCollectionRef(userUid, tableId);
+        setProductsCollectionRef(collectionRef);
+      } else {
+        console.error("User is not authenticated");
+      }
+    } else {
+      console.error("No tableId found in localStorage.");
+    }
+  }, [tableId]);
 
   const readExcel = (file: File) => {
     const fileReader = new FileReader();
@@ -54,13 +74,28 @@ function Import_Products() {
   };
 
   const uploadItemsToDatabase = async () => {
+    if (!productsCollectionRef) {
+      console.error("Collection reference is not yet available.");
+      return;
+    }
+
     try {
-      setLoading(true); // Set loading to true when the upload starts
+      setLoading(true);
       const userUid = auth.currentUser?.uid;
       if (!userUid) {
         console.error("User is not authenticated");
-        setLoading(false); // Set loading to false if user is not authenticated
+        setLoading(false);
         return;
+      }
+
+      // Check if the products collection exists (though this step may be optional)
+      const productQuery = query(productsCollectionRef);
+      const querySnapshot = await getDocs(productQuery);
+
+      if (querySnapshot.empty) {
+        console.log(
+          "Products collection does not exist for this table. Creating it..."
+        );
       }
 
       for (const item of items) {
@@ -71,22 +106,22 @@ function Import_Products() {
         await addDoc(productsCollectionRef, {
           ...sanitizedItem,
           userId: userUid,
+          tableId: tableId,
         });
       }
 
       console.log("Items added to Firestore successfully!");
-      navigate("/product_list");
+      navigate(`/product_list/${tableId}`);
     } catch (err) {
       console.error("Error adding items to Firestore:", err);
     } finally {
-      setLoading(false); // Set loading to false when the process is complete
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      {loading && <Loading_Screen message="Uploading products..." />}{" "}
-      {/* Show loading screen */}
+      {loading && <Loading_Screen message="Uploading products..." />}
       <input
         type="file"
         onChange={(e) => {
@@ -96,11 +131,13 @@ function Import_Products() {
           }
         }}
       />
-      <button onClick={uploadItemsToDatabase} disabled={loading}>
-        {" "}
-        {/* Disable button while loading */}
+      <button
+        onClick={uploadItemsToDatabase}
+        disabled={loading || items.length === 0}
+      >
         Upload to Firestore
       </button>
+
       <table className="table container">
         <thead>
           <tr>

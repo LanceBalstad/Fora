@@ -14,7 +14,7 @@ export const Login = () => {
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/product_list");
+      navigate("/table_list");
     } catch (err) {
       console.error(err);
     }
@@ -31,7 +31,7 @@ export const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/product_list");
+      navigate("/table_list");
     } catch (err) {
       console.error(err);
 

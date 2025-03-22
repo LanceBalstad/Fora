@@ -1,7 +1,10 @@
-import { auth, googleProvider } from "../../config/Firebase";
+import { auth } from "../../config/Firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore"; // Import Firestore methods
+
+const db = getFirestore(); // Get Firestore instance
 
 function Create_Account() {
   const [email, setEmail] = useState("");
@@ -10,10 +13,27 @@ function Create_Account() {
 
   const createAccount = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/product_list");
+      // Create the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Get the user's UID after successful creation
+      const userId = userCredential.user.uid;
+
+      // Add the user to Firestore
+      await setDoc(doc(db, "users", userId), {
+        email: email,
+        createdAt: new Date(),
+        // Add any other fields you want to store here (e.g., name, profile information, etc.)
+      });
+
+      // Navigate to the table list page after creating the account
+      navigate("/table_list");
     } catch (err) {
-      console.error(err);
+      console.error("Error creating account:", err);
     }
   };
 
