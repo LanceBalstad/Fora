@@ -30,61 +30,51 @@ function Row({
   getProductList,
   tableId,
 }: RowProps) {
-  const [isEditing, setIsEditing] = useState(product.isNew || false);
+  const [isEditing, setIsEditing] = useState(product.id === "new");
   const [editedData, setEditedData] = useState<Product>(product);
 
   const handleFieldChange = (field: string, value: string) => {
     setEditedData((prev) => ({ ...prev, [field]: value }));
   };
 
-  //   const saveProduct = async () => {
-  //     const userUid = auth.currentUser?.uid;
-  //     if (!userUid || !tableId) return;
-  //     try {
-  //       const productData = { ...editedData, userId: userUid };
-
-  //       if (product.isNew) {
-  //         const { id, isNew, ...data } = productData;
-  //         await addDoc(
-  //           collection(db, "users", userUid, "tables", tableId, "products"),
-  //           data
-  //         );
-  //       } else {
-  //         const productRef = getProductRef(userUid, tableId, product.id);
-  //         await updateDoc(productRef, productData);
-  //       }
-
-  //       getProductList(userUid);
-  //       setIsEditing(false);
-  //     } catch (err) {
-  //       console.error("Save error:", err);
-  //     }
-  //   };
-
   const saveProduct = async () => {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
+  
     try {
-      const productData = { ...editedData, userId: userUid };
-
-      // Update existing product
-      const productRef = doc(
-        db,
-        "users",
-        userUid,
-        "tables",
-        tableId,
-        "products",
-        product.id
-      );
-      await updateDoc(productRef, productData);
-
-      getProductList(userUid); // Refresh the product list
-      setIsEditing(false); // Exit editing mode
+      if (product.id === "new") {
+        const { id, ...data } = editedData;
+  
+        // Create document with tableId and userId inside the data
+        const docRef = await addDoc(
+          collection(db, "users", userUid, "tables", tableId, "products"),
+          { ...data, tableId, userId: userUid } // include tableId and userId
+        );
+  
+        // Optionally update the newly added product with the Firestore-generated ID (if you want it inside the document too)
+        await updateDoc(docRef, { id: docRef.id }); // <-- adds `id` field to the document itself
+      } else {
+        // Update existing product
+        const productData = { ...editedData, userId: userUid, tableId };
+        const productRef = doc(
+          db,
+          "users",
+          userUid,
+          "tables",
+          tableId,
+          "products",
+          product.id
+        );
+        await updateDoc(productRef, productData);
+      }
+  
+      getProductList(userUid);
+      setIsEditing(false);
     } catch (err) {
       console.error("Save error:", err);
     }
   };
+  
 
   const deleteProduct = async () => {
     try {

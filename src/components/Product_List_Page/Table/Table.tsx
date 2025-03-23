@@ -36,35 +36,10 @@ function Table({
     )
   );
 
-  const addNewProduct = async () => {
-    const userUid = auth.currentUser?.uid;
-    if (!userUid || !tableId) return;
-
-    try {
-      // Create a new blank product with the required fields
-      const newProduct: Product = headers.reduce(
-        (acc, header) => {
-          acc[header] = ""; // Set each field to empty
-          return acc;
-        },
-        { id: "new" } as Product // Explicitly cast to Product
-      );
-
-      // Add the new product to the Firestore collection
-      const productsRef = getProductsCollectionRef(userUid, tableId);
-      const docRef = await addDoc(productsRef, newProduct);
-
-      // Update the productList with the new product, including the Firestore document ID
-      setProductList((prev) => [
-        ...prev,
-        { ...newProduct, id: docRef.id }, // Add the Firestore-generated ID
-      ]);
-
-      // Optionally, you can call getProductList() if you need to refresh the product list from Firestore
-      getProductList(userUid);
-    } catch (err) {
-      console.error("Add new product error:", err);
-    }
+  const addNewProduct = () => {
+    const newProduct: Product = { id: "new" };
+    headers.forEach((header) => (newProduct[header] = ""));
+    setProductList((prev) => [newProduct, ...prev]);
   };
 
   const deleteAllProducts = async () => {
