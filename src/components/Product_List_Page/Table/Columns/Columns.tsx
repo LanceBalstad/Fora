@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { getDocs, deleteDoc, doc, addDoc, collection, writeBatch, deleteField } from "firebase/firestore";
 import { db, auth } from "../../../../config/Firebase";
 import { getColumnsCollectionRef } from "../../../../utils/firestorePaths";
+import { getProductsCollectionRef } from "../../../../utils/firestorePaths";
 
 interface ColumnsProps {
   headers: string[];
@@ -33,7 +29,7 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     if (!userUid || !tableId) return;
 
     const colRef = getColumnsCollectionRef(userUid, tableId);
-    await addDoc(colRef, { name: newColumn.trim() });
+    await addDoc(colRef, { name: newColumn.trim(), userId: userUid });
     setNewColumn("");
     fetchColumns();
   };
@@ -41,15 +37,43 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
   const deleteColumn = async (nameToDelete: string) => {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
-
+  
     const colRef = getColumnsCollectionRef(userUid, tableId);
     const snapshot = await getDocs(colRef);
     const match = snapshot.docs.find((doc) => doc.data().name === nameToDelete);
+  
     if (match) {
+      // Delete the column from Firestore
       await deleteDoc(doc(colRef, match.id));
+  
+      // Now, check and update the products
+      const productsRef = getProductsCollectionRef(userUid, tableId)
+      const productsSnap = await getDocs(productsRef);
+      
+      // Create a batch to perform multiple write operations
+      const batch = writeBatch(db);
+  
+      // Loop through all products
+      productsSnap.forEach((productDoc) => {
+        const productData = productDoc.data();
+        
+        // Check if the product has a field matching the deleted column name
+        if (productData.hasOwnProperty(nameToDelete)) {
+          const productDocRef = doc(productsRef, productDoc.id);
+          
+          // Add the delete operation to the batch
+          batch.update(productDocRef, { [nameToDelete]: deleteField() });
+        }
+      });
+  
+      // Commit the batch update to delete the field from products
+      await batch.commit();
+  
+      // Fetch columns again after the deletion
       fetchColumns();
     }
   };
+  
 
   useEffect(() => {
     fetchColumns();

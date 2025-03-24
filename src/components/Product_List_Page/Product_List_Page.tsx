@@ -30,24 +30,25 @@ function Product_List_Page() {
   useEffect(() => {
     const fetchProducts = async () => {
       if (!userUid || !tableId) return;
-
+  
       try {
         const collectionRef = getProductsCollectionRef(userUid, tableId);
-
+  
         const queriedData = query(
           collectionRef,
           where("userId", "==", userUid),
           where("tableId", "==", tableId)
         );
-
+  
         const data = await getDocs(queriedData);
         const filteredData = data.docs.map((doc) => ({
           ...(doc.data() as Record<string, any>),
           id: doc.id,
         })) as Product[];
-
+  
         setProductList(filteredData);
-
+  
+        // Only set headers if they're not already set
         if (headers.length === 0 && filteredData.length > 0) {
           const uniqueHeaders = Array.from(
             new Set(
@@ -58,13 +59,13 @@ function Product_List_Page() {
               )
             )
           );
-          setHeaders(uniqueHeaders);
+          //setHeaders(uniqueHeaders);
         }
       } catch (err) {
         console.error("Error fetching product list:", err);
       }
     };
-
+  
     fetchProducts();
   }, [userUid, tableId]);
 
