@@ -74,6 +74,7 @@ function Product_List_Page() {
       <Table
         productList={productList}
         setProductList={setProductList}
+        setHeaders={setHeaders}
         headers={headers}
         getProductList={() => {
           if (userUid && tableId) {

@@ -23,7 +23,7 @@ interface RowProps {
   tableId: string | undefined;
 }
 
-function Row({
+function Rows({
   product,
   headers,
   setProductList,
@@ -126,4 +126,4 @@ function Row({
   );
 }
 
-export default Row;
+export default Rows;

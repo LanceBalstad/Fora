@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { db, auth } from "../../config/Firebase";
-import { addDoc, collection, getDocs, query, doc } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Loading_Screen from "../Loading_Screen/Loading_Screen";
-import { getProductsCollectionRef } from "../../utils/firestorePaths";
+import { getProductsCollectionRef, getColumnsCollectionRef } from "../../utils/firestorePaths";
+
+interface Column {
+  name: string;
+}
 
 function Import_Products() {
   const [headers, setHeaders] = useState<string[]>([]);
@@ -12,19 +16,18 @@ function Import_Products() {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Retrieve tableId from localStorage directly
-  const [tableId] = useState<string | null>(
-    localStorage.getItem("activeTableId")
-  );
-
+  const [tableId] = useState<string | null>(localStorage.getItem("activeTableId"));
   const [productsCollectionRef, setProductsCollectionRef] = useState<any>(null);
+  const [columnsCollectionRef, setColumnsCollectionRef] = useState<any>(null);
 
   useEffect(() => {
     if (tableId) {
       const userUid = auth.currentUser?.uid;
       if (userUid) {
-        const collectionRef = getProductsCollectionRef(userUid, tableId);
-        setProductsCollectionRef(collectionRef);
+        const productRef = getProductsCollectionRef(userUid, tableId);
+        const columnRef = getColumnsCollectionRef(userUid, tableId);
+        setProductsCollectionRef(productRef);
+        setColumnsCollectionRef(columnRef);
       } else {
         console.error("User is not authenticated");
       }
@@ -73,8 +76,25 @@ function Import_Products() {
     };
   };
 
+  const updateColumnsInFirestore = async () => {
+    if (!columnsCollectionRef) return;
+
+    const existingColumnsSnap = await getDocs(columnsCollectionRef);
+    const existingColumns = existingColumnsSnap.docs.map((doc) => {
+      const columnData = doc.data() as Column; // Type assertion
+      return columnData.name;
+    });
+
+    // Check and add missing columns to Firestore
+    for (const header of headers) {
+      if (!existingColumns.includes(header)) {
+        await addDoc(columnsCollectionRef, { name: header });
+      }
+    }
+  };
+
   const uploadItemsToDatabase = async () => {
-    if (!productsCollectionRef) {
+    if (!productsCollectionRef || !columnsCollectionRef) {
       console.error("Collection reference is not yet available.");
       return;
     }
@@ -88,16 +108,10 @@ function Import_Products() {
         return;
       }
 
-      // Check if the products collection exists (though this step may be optional)
-      const productQuery = query(productsCollectionRef);
-      const querySnapshot = await getDocs(productQuery);
+      // Update columns in Firestore if needed
+      await updateColumnsInFirestore();
 
-      if (querySnapshot.empty) {
-        console.log(
-          "Products collection does not exist for this table. Creating it..."
-        );
-      }
-
+      // Upload products to Firestore
       for (const item of items) {
         const sanitizedItem = Object.fromEntries(
           Object.entries(item).filter(([_, value]) => value !== undefined)

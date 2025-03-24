@@ -14,6 +14,10 @@ export const getProductRef = (
   return doc(db, "users", userId, "tables", tableId, "products", productId);
 };
 
+export const getColumnsCollectionRef = (userId: string, tableId: string) =>
+  collection(db, "users", userId, "tables", tableId, "columns");
+
+
 export const getTablesRef = (userId: string) => {
     return collection(db, "users", userId, "tables");
   };
