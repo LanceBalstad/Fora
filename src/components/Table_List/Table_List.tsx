@@ -97,7 +97,6 @@ const Table_List_Page: React.FC = () => {
       >
         Add New Table
       </button>
-      <div>here</div>
       {isCreatingTable && (
         <div className="modals">
           <div className="modal-content">

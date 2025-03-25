@@ -49,3 +49,13 @@
     transform: scale(1);
   }
   
+  .nav-link:hover {
+    color: white;
+  }
+  
+  .active-link {
+    color: white;
+    font-weight: bold;
+  }
+  
+  

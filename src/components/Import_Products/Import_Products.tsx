@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { db, auth } from "../../config/Firebase";
-import { addDoc, collection, getDocs, query, doc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Loading_Screen from "../Loading_Screen/Loading_Screen";
-import { getProductsCollectionRef, getColumnsCollectionRef } from "../../utils/firestorePaths";
+import {
+  getProductsCollectionRef,
+  getColumnsCollectionRef,
+} from "../../utils/firestorePaths";
 
 interface Column {
   name: string;
@@ -16,7 +26,9 @@ function Import_Products() {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const [tableId] = useState<string | null>(localStorage.getItem("activeTableId"));
+  const [tableId] = useState<string | null>(
+    localStorage.getItem("activeTableId")
+  );
   const [productsCollectionRef, setProductsCollectionRef] = useState<any>(null);
   const [columnsCollectionRef, setColumnsCollectionRef] = useState<any>(null);
 
@@ -77,18 +89,20 @@ function Import_Products() {
   };
 
   const updateColumnsInFirestore = async () => {
+    const userId = auth.currentUser?.uid;
+
     if (!columnsCollectionRef) return;
 
     const existingColumnsSnap = await getDocs(columnsCollectionRef);
     const existingColumns = existingColumnsSnap.docs.map((doc) => {
-      const columnData = doc.data() as Column; // Type assertion
+      const columnData = doc.data() as Column;
       return columnData.name;
     });
 
     // Check and add missing columns to Firestore
     for (const header of headers) {
       if (!existingColumns.includes(header)) {
-        await addDoc(columnsCollectionRef, { name: header });
+        await addDoc(columnsCollectionRef, { name: header, userId: userId });
       }
     }
   };

@@ -12,7 +12,6 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    // If user navigates to /table_list, clear the tableId
     if (location.pathname === "/table_list") {
       localStorage.removeItem("activeTableId");
       setTableId(null);
@@ -35,15 +34,32 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-links">
-        <Link to="/table_list" className="nav-link">
+        <Link
+          to="/table_list"
+          className={`nav-link ${
+            location.pathname === "/table_list" ? "active-link" : ""
+          }`}
+        >
           Table List
         </Link>
         {tableId && (
           <>
-            <Link to={`/product_list/${tableId}`} className="nav-link">
+            <Link
+              to={`/product_list/${tableId}`}
+              className={`nav-link ${
+                location.pathname === `/product_list/${tableId}`
+                  ? "active-link"
+                  : ""
+              }`}
+            >
               Product List
             </Link>
-            <Link to="/import_products" className="nav-link">
+            <Link
+              to="/import_products"
+              className={`nav-link ${
+                location.pathname === "/import_products" ? "active-link" : ""
+              }`}
+            >
               Import Products
             </Link>
           </>

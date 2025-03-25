@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getDocs, deleteDoc, doc, addDoc, collection, writeBatch, deleteField } from "firebase/firestore";
+import {
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+  collection,
+  writeBatch,
+  deleteField,
+} from "firebase/firestore";
 import { db, auth } from "../../../../config/Firebase";
-import { getColumnsCollectionRef } from "../../../../utils/firestorePaths";
-import { getProductsCollectionRef } from "../../../../utils/firestorePaths";
+import {
+  getColumnsCollectionRef,
+  getProductsCollectionRef,
+} from "../../../../utils/firestorePaths";
+import "./Columns.css";
 
 interface ColumnsProps {
   headers: string[];
@@ -37,43 +48,46 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
   const deleteColumn = async (nameToDelete: string) => {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
-  
+
     const colRef = getColumnsCollectionRef(userUid, tableId);
     const snapshot = await getDocs(colRef);
     const match = snapshot.docs.find((doc) => doc.data().name === nameToDelete);
-  
+
     if (match) {
-      // Delete the column from Firestore
-      await deleteDoc(doc(colRef, match.id));
-  
-      // Now, check and update the products
-      const productsRef = getProductsCollectionRef(userUid, tableId)
+      const productsRef = getProductsCollectionRef(userUid, tableId);
       const productsSnap = await getDocs(productsRef);
-      
-      // Create a batch to perform multiple write operations
+
+      // Check if any product has a value in the column
+      const hasData = productsSnap.docs.some(
+        (productDoc) =>
+          productDoc.data().hasOwnProperty(nameToDelete) &&
+          productDoc.data()[nameToDelete] !== undefined &&
+          productDoc.data()[nameToDelete] !== null &&
+          productDoc.data()[nameToDelete] !== ""
+      );
+
+      if (hasData) {
+        const confirmDelete = window.confirm(
+          `The column "${nameToDelete}" contains data in some products. This data will be permanently deleted. Are you sure you want to delete it?`
+        );
+        if (!confirmDelete) return;
+      }
+
+      await deleteDoc(doc(colRef, match.id));
+
       const batch = writeBatch(db);
-  
-      // Loop through all products
       productsSnap.forEach((productDoc) => {
         const productData = productDoc.data();
-        
-        // Check if the product has a field matching the deleted column name
         if (productData.hasOwnProperty(nameToDelete)) {
           const productDocRef = doc(productsRef, productDoc.id);
-          
-          // Add the delete operation to the batch
           batch.update(productDocRef, { [nameToDelete]: deleteField() });
         }
       });
-  
-      // Commit the batch update to delete the field from products
+
       await batch.commit();
-  
-      // Fetch columns again after the deletion
       fetchColumns();
     }
   };
-  
 
   useEffect(() => {
     fetchColumns();
@@ -83,35 +97,24 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     <thead className="thead-light">
       <tr>
         {headers.map((header, idx) => (
-          <th key={idx} style={{ position: "relative", paddingRight: "20px" }}>
+          <th key={idx}>
             {header}
             <button
               onClick={() => deleteColumn(header)}
-              style={{
-                position: "absolute",
-                top: "50%",
-                right: "5px",
-                transform: "translateY(-50%)",
-                border: "none",
-                background: "transparent",
-                color: "red",
-                cursor: "pointer",
-                fontSize: "1rem",
-              }}
+              className="delete-column-btn"
             >
               ✕
             </button>
           </th>
         ))}
-        {/* Add Column Input & Button next to headers */}
         <th>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <div className="add-column-container">
             <input
               type="text"
-              placeholder="New Column Name"
+              placeholder="New Header..."
               value={newColumn}
               onChange={(e) => setNewColumn(e.target.value)}
-              style={{ flexGrow: 1, maxWidth: "120px" }}
+              className="add-column-input"
             />
             <button onClick={addColumn}>+</button>
           </div>
