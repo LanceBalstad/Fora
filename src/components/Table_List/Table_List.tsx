@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { auth, db } from "../../config/Firebase";
 import { getTablesRef } from "../../utils/firestorePaths";
+import "./Table_List.css";
 
 interface Table {
   id: string;
@@ -12,25 +20,19 @@ interface Table {
 const Table_List_Page: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [newTableName, setNewTableName] = useState<string>("");
-  const [isCreatingTable, setIsCreatingTable] = useState<boolean>(false); // Flag to control modal visibility
+  const [isCreatingTable, setIsCreatingTable] = useState<boolean>(false);
   const navigate = useNavigate();
   const userId = auth.currentUser?.uid;
 
-  // Function to fetch tables from Firestore
   const fetchTables = async () => {
     if (userId) {
       const tablesRef = getTablesRef(userId);
-
       try {
         const querySnapshot = await getDocs(tablesRef);
-        const tableList: Table[] = [];
-        querySnapshot.forEach((docSnapshot) => {
-          const tableData = docSnapshot.data();
-          tableList.push({
-            id: docSnapshot.id,
-            tableName: tableData.tableName || "Unnamed Table",
-          });
-        });
+        const tableList: Table[] = querySnapshot.docs.map((docSnapshot) => ({
+          id: docSnapshot.id,
+          tableName: docSnapshot.data().tableName || "Unnamed Table",
+        }));
         setTables(tableList);
       } catch (error) {
         console.error("Error fetching tables: ", error);
@@ -39,7 +41,7 @@ const Table_List_Page: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchTables(); // Fetch tables on component mount
+    fetchTables();
   }, [userId]);
 
   const handleTableClick = (tableId: string) => {
@@ -55,36 +57,52 @@ const Table_List_Page: React.FC = () => {
 
     if (userId) {
       try {
-        console.log("Creating new table with name:", newTableName); // Debug log
-        // Add new table under the user's tables subcollection
         await addDoc(collection(db, "users", userId, "tables"), {
           tableName: newTableName,
+          userId: userId,
         });
 
-        // After the table is created, fetch the updated list of tables
         await fetchTables();
-
         setNewTableName("");
         setIsCreatingTable(false);
-        console.log("Table created successfully"); // Debug log
       } catch (error) {
         console.error("Error creating table: ", error);
       }
     }
   };
 
+  const handleDeleteTable = async (tableId: string) => {
+    if (window.confirm("Are you sure you want to delete this table?")) {
+      try {
+        await deleteDoc(doc(db, "users", userId!, "tables", tableId));
+        setTables(tables.filter((table) => table.id !== tableId));
+      } catch (error) {
+        console.error("Error deleting table: ", error);
+      }
+    }
+  };
+
   return (
-    <div>
+    <div className="table-list-container">
       <h1>Your Tables</h1>
 
       {tables.length === 0 ? (
         <p>No tables found. Create one to start adding products!</p>
       ) : (
-        <ul>
+        <ul className="table-list">
           {tables.map((table) => (
-            <li key={table.id}>
-              <button onClick={() => handleTableClick(table.id)}>
+            <li key={table.id} className="table-item">
+              <button
+                onClick={() => handleTableClick(table.id)}
+                className="table-button"
+              >
                 {table.tableName}
+              </button>
+              <button
+                onClick={() => handleDeleteTable(table.id)}
+                className="delete-button"
+              >
+                ❌
               </button>
             </li>
           ))}
@@ -97,6 +115,7 @@ const Table_List_Page: React.FC = () => {
       >
         Add New Table
       </button>
+
       {isCreatingTable && (
         <div className="modals">
           <div className="modal-content">

@@ -9,7 +9,6 @@ section{
     align-items: center;
     min-height: 100vh;
     width: 100%;
-    /* background color for whole login component */
     background-color: #e9faee;
     background-position: center;
     background-size: cover;
@@ -43,7 +42,7 @@ h2{
 
 .inputbox label {
     position: absolute;
-    top: 5px; /* Adjust as needed */
+    top: 5px;
     left: 5px;
     transform: translateY(-50%);
     color: #000;
@@ -64,7 +63,7 @@ h2{
     border: none;
     outline: none;
     font-size: 1em;
-    padding: 0 5px; /* Adjust padding */
+    padding: 0 5px;
     color: #000;
 }
 
@@ -86,7 +85,6 @@ button:hover{
 }
 
 .error-message{
-    /* margin: 1px 0 10px; */
     text-align: center;
     color: var(--errormsgcolor);
 

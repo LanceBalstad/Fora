@@ -1,0 +1,62 @@
+/* .table-list-container {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .table-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .table-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-button {
+    flex-grow: 1;
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+    padding: 5px;
+  }
+  
+  .table-button:hover {
+    text-decoration: underline;
+  }
+  
+  .delete-button {
+    background: none;
+    border: none;
+    color: red;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .delete-button:hover {
+    font-weight: bold;
+  }
+  
+  .add-table-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+  
+  .add-table-button:hover {
+    background-color: #45a049;
+  }
+   */
