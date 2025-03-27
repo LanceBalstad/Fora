@@ -19,11 +19,11 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showAI, setShowAI] = useState(true); // State to control AI visibility
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   const apiKey = import.meta.env.VITE_API_KEY;
 
-  // Construct product information message (only for internal use)
   const getProductContext = () => {
     if (!productList.length) {
       return "The user has no products in their inventory.";
@@ -86,27 +86,39 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
     }
   };
 
+  const toggleAI = () => {
+    setShowAI(!showAI); // Toggle AI visibility
+  };
+
   return (
     <div className="chatbot-container">
-      <div className="chatbox">
-        {messages.map((msg, index) => (
-          <div key={index} className="message">
-            <span className="user">{msg.user}:</span>
-            <span className="text">{msg.message}</span>
-          </div>
-        ))}
-        {isLoading && <div className="loading">AI Assistant is typing...</div>}
-      </div>
+      {showAI && (
+        <div className="chatbox">
+          {messages.map((msg, index) => (
+            <div key={index} className="message">
+              <span className="user">{msg.user}:</span>
+              <span className="text">{msg.message}</span>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="loading">AI Assistant is typing...</div>
+          )}
+        </div>
+      )}
 
       <div className="input-container">
         <input
           type="text"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          placeholder="Type your question..."
-          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Ask AI about your table..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button onClick={sendMessage}>Send</button>
+
+        <button className="circular-btn" onClick={toggleAI}>
+          {showAI ? "Hide Chat" : "Show Chat"}
+        </button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles/styles.css";
 import ReactDOM from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.css";
 import { RouterProvider } from "react-router-dom";

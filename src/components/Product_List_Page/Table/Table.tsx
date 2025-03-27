@@ -32,7 +32,10 @@ function Table({
 
   const filteredProducts = productList.filter((product) =>
     headers.some((header) =>
-      product[header]?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      product[header]
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
   );
 

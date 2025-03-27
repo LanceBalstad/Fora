@@ -1,28 +1,44 @@
 .thead-light th {
-    position: relative;
-    padding-right: 20px;
-  }
-  
-  .delete-column-btn {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    color: red;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  
-  .add-column-container {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  
-  .add-column-input {
-    flex-grow: 1;
-    max-width: 120px;
-  }
-  
+  position: relative;
+  text-align: center;
+  padding: 10px;
+  white-space: nowrap; /* Prevents columns from stacking */
+}
+
+.column-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.delete-column-btn {
+  border: none;
+  background: transparent;
+  color: red;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.add-column-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.add-column-input {
+  flex-grow: 1;
+  max-width: 120px;
+}
+
+.add-column-container button {
+  width: 40px; /* Set a fixed width */
+  height: 30px; /* Increase height */
+}
+
+/* Ensure table remains horizontally scrollable */
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: nowrap;
+}

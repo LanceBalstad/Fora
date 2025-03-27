@@ -15,12 +15,13 @@ import {
   getProductsCollectionRef,
   getColumnsCollectionRef,
 } from "../../utils/firestorePaths";
+import "./Import_Products.css";
 
 interface Column {
   name: string;
 }
 
-function Import_Products() {
+function ImportProductsContainer() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -148,7 +149,7 @@ function Import_Products() {
   };
 
   return (
-    <div>
+    <div className="import-products-container">
       {loading && <Loading_Screen message="Uploading products..." />}
       <input
         type="file"
@@ -166,28 +167,30 @@ function Import_Products() {
         Upload to Firestore
       </button>
 
-      <table className="table container">
-        <thead>
-          <tr>
-            {headers.map((header, index) => (
-              <th scope="col" key={index}>
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((row, rowIndex) => (
-            <tr key={rowIndex}>
+      <div className="import-products-table-container">
+        <table className="table">
+          <thead>
+            <tr>
               {headers.map((header, index) => (
-                <td key={index}>{row[header]}</td>
+                <th scope="col" key={index}>
+                  {header}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {headers.map((header, index) => (
+                  <td key={index}>{row[header]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
-export default Import_Products;
+export default ImportProductsContainer;

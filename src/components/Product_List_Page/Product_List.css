@@ -1,62 +1,78 @@
-/* Action Buttons in Rows - Positioned side by side */
+.table-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow-x: auto;  /* Enables horizontal scrolling */
+}
+
+.table-wrapper {
+  min-width: 50%;  /* Ensures the table doesn't get too small */
+  max-width: 100%;  /* Prevents overflow beyond the container */
+  overflow-x: auto;  /* Allows scrolling when necessary */
+}
+
+.table {
+  width: auto;  /* Only takes up needed space */
+  min-width: 800px;  /* Adjust based on content */
+  table-layout: auto;
+}
+
 .tableactions {
   display: flex;
-  justify-content: flex-start; /* Align to the left */
+  justify-content: flex-start;
   align-items: center;
-  gap: 15px; /* Space between elements */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  gap: 15px;
   padding: 10px;
   margin-bottom: 15px;
 }
 
-/* Search Input Styling */
 .search-input {
   padding: 8px 15px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 250px;
-  margin-right: 20px; /* Space between search input and buttons */
+  margin-right: 20px; 
   outline: none;
 }
 
-/* Table Row Styling */
+
 .table tbody tr:hover {
   background-color: #f1f1f1;
 }
 
-/* Styling for Table Input Fields */
+
 .table td input {
-  width: 100%; /* Ensure the input takes up the full width of the cell */
+  width: 100%; 
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 0.9rem;
 }
 
-/* Table Headers Styling */
+
 .table th {
   background-color: #f8f9fa;
   font-weight: bold;
 }
 
-  /* Logout button */
-  .changeProductButton {
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 20%;
-    transition: background-color 0.3s, transform 0.2s;
-  }
   
-  .changeProductButton:hover {
-    transform: scale(1.05);
-  }
-  
-  .changeProductButton:active {
-    transform: scale(1);
-  }
+.changeProductButton {
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 20%;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.changeProductButton:hover {
+  transform: scale(1.05);
+}
+
+.changeProductButton:active {
+  transform: scale(1);
+}

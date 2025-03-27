@@ -1,0 +1,43 @@
+.import-products-container {
+    border: 1px solid red;
+    
+}
+
+.import-products-container input[type="file"] {
+    margin-bottom: 200px;
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #69b3b2;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button {
+    width: 100%;
+    height: 45px;
+    font-size: 1.1em;
+    font-weight: 600;
+    background-color: #4e8c76;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:disabled {
+    background-color: #a3d0ca;
+    cursor: not-allowed;
+}
+
+button:hover:enabled {
+    background-color: #39796b;
+}
+
+.import-products-table-container {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+}

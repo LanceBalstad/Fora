@@ -97,14 +97,16 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     <thead className="thead-light">
       <tr>
         {headers.map((header, idx) => (
-          <th key={idx}>
-            {header}
-            <button
-              onClick={() => deleteColumn(header)}
-              className="delete-column-btn"
-            >
-              ✕
-            </button>
+          <th key={idx} className="column-header">
+            <div className="column-header-content">
+              <button
+                onClick={() => deleteColumn(header)}
+                className="delete-column-btn"
+              >
+                ✕
+              </button>
+              <span>{header}</span>
+            </div>
           </th>
         ))}
         <th>
