@@ -17,7 +17,7 @@ function Product_List_Page() {
   const [headers, setHeaders] = useState<string[]>([]);
   const { tableId } = useParams();
   const [userUid, setUserUid] = useState<string | null>(null);
-  const [showOpenAI, setShowOpenAI] = useState(true); // State to control OpenAI_Helper visibility
+  const [showOpenAI, setShowOpenAI] = useState(false);
 
   // Watch authentication state
   useEffect(() => {
@@ -113,8 +113,8 @@ function Product_List_Page() {
           }
         }}
         tableId={tableId}
-        toggleOpenAI={toggleOpenAI} // Pass toggle function to Table
-        showOpenAI={showOpenAI} // Pass current state (for button label)
+        toggleOpenAI={toggleOpenAI}
+        showOpenAI={showOpenAI}
       />
     </>
   );

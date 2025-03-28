@@ -72,15 +72,17 @@ function Table({
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
-        <button onClick={addNewProduct} className="changeProductButton">
-          Add Product
-        </button>
-        <button onClick={deleteAllProducts} className="changeProductButton">
-          Delete All Products
-        </button>
-        <button onClick={toggleOpenAI} className="changeProductButton">
-          {showOpenAI ? "Hide Chat" : "Show Chat"}
-        </button>
+        <div className="action-buttons">
+          <button onClick={addNewProduct} className="changeProductButton">
+            Add Product
+          </button>
+          <button onClick={deleteAllProducts} className="changeProductButton">
+            Delete All Products
+          </button>
+          <button onClick={toggleOpenAI} className="changeProductButton">
+            {showOpenAI ? "Hide AI Chat" : "Show AI Chat"}
+          </button>
+        </div>
       </div>
 
       <div className="table container">

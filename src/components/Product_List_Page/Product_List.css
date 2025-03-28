@@ -1,3 +1,6 @@
+/* Product_list.css */
+
+/* Container for the overall product list page */
 .table-container {
   display: flex;
   justify-content: center;
@@ -11,12 +14,7 @@
   overflow-x: auto;  /* Allows scrolling when necessary */
 }
 
-.table {
-  width: auto;  /* Only takes up needed space */
-  min-width: 800px;  /* Adjust based on content */
-  table-layout: auto;
-}
-
+/* Table Actions */
 .tableactions {
   display: flex;
   justify-content: flex-start;
@@ -32,31 +30,11 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 250px;
-  margin-right: 20px; 
+  margin-right: 20px;
   outline: none;
 }
 
-
-.table tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-
-.table td input {
-  width: 100%; 
-  padding: 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-
-.table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-}
-
-  
+/* Change Product Button Styles */
 .changeProductButton {
   color: white;
   border: none;
@@ -76,3 +54,94 @@
 .changeProductButton:active {
   transform: scale(1);
 }
+
+/* Table.css */
+
+/* Table styling */
+.table {
+  width: auto;  /* Only takes up needed space */
+  min-width: 800px;  /* Adjust based on content */
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Styling for inputs within table cells */
+.table td input {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Updated Product_list.css or Table.css for tableactions */
+
+.tableactions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* Wrap items on small screens */
+}
+
+.search-input {
+  padding: 8px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+  /* Remove margin-right since gap handles spacing */
+  outline: none;
+}
+
+/* New container for buttons to ensure they stay adjacent */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+/* Adjust button styles to allow them to sit next to each other */
+.changeProductButton {
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0; /* Prevent button from shrinking */
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.changeProductButton:hover {
+  transform: scale(1.05);
+}
+
+.changeProductButton:active {
+  transform: scale(1);
+}
+
