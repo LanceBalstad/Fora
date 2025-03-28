@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getDocs, deleteDoc } from "firebase/firestore";
 import { auth } from "../../../config/Firebase";
 import Rows from "./Rows/Rows";
-import Column from "./Columns/Columns"; // make sure this import path matches your structure
+import Column from "./Columns/Columns";
 import "../Product_List.css";
 import { getProductsCollectionRef } from "../../../utils/firestorePaths";
 
@@ -18,6 +18,8 @@ interface TableProps {
   setHeaders: React.Dispatch<React.SetStateAction<string[]>>;
   getProductList: (userUid: string) => void;
   tableId: string | undefined;
+  toggleOpenAI: () => void; // New prop for toggling OpenAI_Helper
+  showOpenAI: boolean; // Current state of OpenAI_Helper visibility
 }
 
 function Table({
@@ -27,6 +29,8 @@ function Table({
   setHeaders,
   getProductList,
   tableId,
+  toggleOpenAI,
+  showOpenAI,
 }: TableProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -73,6 +77,9 @@ function Table({
         </button>
         <button onClick={deleteAllProducts} className="changeProductButton">
           Delete All Products
+        </button>
+        <button onClick={toggleOpenAI} className="changeProductButton">
+          {showOpenAI ? "Hide Chat" : "Show Chat"}
         </button>
       </div>
 

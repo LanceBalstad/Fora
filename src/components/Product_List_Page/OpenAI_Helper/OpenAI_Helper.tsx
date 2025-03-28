@@ -19,7 +19,6 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showAI, setShowAI] = useState(true); // State to control AI visibility
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   const apiKey = import.meta.env.VITE_API_KEY;
@@ -28,7 +27,6 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
     if (!productList.length) {
       return "The user has no products in their inventory.";
     }
-
     return `The user has the following products:\n${productList
       .map((product) =>
         columns.map((col) => `${col}: ${product[col]}`).join(", ")
@@ -86,25 +84,17 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
     }
   };
 
-  const toggleAI = () => {
-    setShowAI(!showAI); // Toggle AI visibility
-  };
-
   return (
     <div className="chatbot-container">
-      {showAI && (
-        <div className="chatbox">
-          {messages.map((msg, index) => (
-            <div key={index} className="message">
-              <span className="user">{msg.user}:</span>
-              <span className="text">{msg.message}</span>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="loading">AI Assistant is typing...</div>
-          )}
-        </div>
-      )}
+      <div className="chatbox">
+        {messages.map((msg, index) => (
+          <div key={index} className="message">
+            <span className="user">{msg.user}:</span>
+            <span className="text">{msg.message}</span>
+          </div>
+        ))}
+        {isLoading && <div className="loading">AI Assistant is typing...</div>}
+      </div>
 
       <div className="input-container">
         <input
@@ -115,10 +105,6 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button onClick={sendMessage}>Send</button>
-
-        <button className="circular-btn" onClick={toggleAI}>
-          {showAI ? "Hide Chat" : "Show Chat"}
-        </button>
       </div>
     </div>
   );

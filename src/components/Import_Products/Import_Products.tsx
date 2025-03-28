@@ -152,7 +152,9 @@ function ImportProductsContainer() {
     <div className="import-products-container">
       {loading && <Loading_Screen message="Uploading products..." />}
       <input
+        id="fileInput"
         type="file"
+        title="Upload a file"
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) {

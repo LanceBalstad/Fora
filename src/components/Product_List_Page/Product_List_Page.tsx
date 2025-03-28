@@ -17,6 +17,7 @@ function Product_List_Page() {
   const [headers, setHeaders] = useState<string[]>([]);
   const { tableId } = useParams();
   const [userUid, setUserUid] = useState<string | null>(null);
+  const [showOpenAI, setShowOpenAI] = useState(true); // State to control OpenAI_Helper visibility
 
   // Watch authentication state
   useEffect(() => {
@@ -72,9 +73,16 @@ function Product_List_Page() {
     fetchProducts();
   }, [userUid, tableId]);
 
+  // Function to toggle OpenAI_Helper visibility
+  const toggleOpenAI = () => {
+    setShowOpenAI((prev) => !prev);
+  };
+
   return (
     <>
-      <OpenAI_Helper productList={productList} columns={headers} />
+      {showOpenAI && (
+        <OpenAI_Helper productList={productList} columns={headers} />
+      )}
       <Table
         productList={productList}
         setProductList={setProductList}
@@ -82,7 +90,6 @@ function Product_List_Page() {
         headers={headers}
         getProductList={() => {
           if (userUid && tableId) {
-            // Allow child components to trigger a refresh
             const collectionRef = getProductsCollectionRef(userUid, tableId);
 
             const reloadData = async () => {
@@ -106,6 +113,8 @@ function Product_List_Page() {
           }
         }}
         tableId={tableId}
+        toggleOpenAI={toggleOpenAI} // Pass toggle function to Table
+        showOpenAI={showOpenAI} // Pass current state (for button label)
       />
     </>
   );
