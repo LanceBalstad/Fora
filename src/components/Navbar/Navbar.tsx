@@ -60,7 +60,7 @@ const Navbar = () => {
                 location.pathname === "/import_products" ? "active-link" : ""
               }`}
             >
-              Import Products
+              Import Table
             </Link>
           </>
         )}

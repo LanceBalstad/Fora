@@ -72,7 +72,11 @@ const Table_List_Page: React.FC = () => {
   };
 
   const handleDeleteTable = async (tableId: string) => {
-    if (window.confirm("Are you sure you want to delete this table?")) {
+    if (
+      window.confirm(
+        "This will permanently delete the table and all its data. Are you sure you want to continue?"
+      )
+    ) {
       try {
         await deleteDoc(getTableRef(userId!, tableId));
         setTables(tables.filter((table) => table.id !== tableId));
@@ -85,29 +89,6 @@ const Table_List_Page: React.FC = () => {
   return (
     <div className="table-list-container">
       <h1>Your Tables</h1>
-
-      {tables.length === 0 ? (
-        <p>No tables found. Create one to start adding products!</p>
-      ) : (
-        <ul className="table-list">
-          {tables.map((table) => (
-            <li key={table.id} className="table-item">
-              <button
-                onClick={() => handleTableClick(table.id)}
-                className="table-button"
-              >
-                {table.tableName}
-              </button>
-              <button
-                onClick={() => handleDeleteTable(table.id)}
-                className="delete-button"
-              >
-                ❌
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
 
       <button
         onClick={() => setIsCreatingTable(true)}
@@ -131,17 +112,31 @@ const Table_List_Page: React.FC = () => {
           </div>
         </div>
       )}
+
+      {tables.length === 0 ? (
+        <p>No tables found. Create one to start adding products!</p>
+      ) : (
+        <ul className="table-list">
+          {tables.map((table) => (
+            <li key={table.id} className="table-item">
+              <button
+                onClick={() => handleTableClick(table.id)}
+                className="table-button"
+              >
+                {table.tableName}
+              </button>
+              <button
+                onClick={() => handleDeleteTable(table.id)}
+                className="delete-button"
+              >
+                ❌
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
 export default Table_List_Page;
-
-// loading screen on delete all products
-// biggert login
-// ask if you want to delete all and delete singular products
-// make the delete button on columns closer
-// change from upload to firestore
-// move new header thing aligned
-// Add bnew table button should be on the top
-// have columns ordered

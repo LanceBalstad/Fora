@@ -1,17 +1,13 @@
-/* Product_list.css */
-
-/* Container for the overall product list page */
 .table-container {
-  display: flex;
-  justify-content: center;
   width: 100%;
-  overflow-x: auto;  /* Enables horizontal scrolling */
+  overflow-x: auto;
+  white-space: normal;
 }
 
 .table-wrapper {
-  min-width: 50%;  /* Ensures the table doesn't get too small */
-  max-width: 100%;  /* Prevents overflow beyond the container */
-  overflow-x: auto;  /* Allows scrolling when necessary */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Table Actions */
@@ -55,12 +51,12 @@
   transform: scale(1);
 }
 
-/* Table.css */
+/* prviously Table.css */
 
 /* Table styling */
 .table {
-  width: auto;  /* Only takes up needed space */
-  min-width: 800px;  /* Adjust based on content */
+  width: 100%;  
+  min-width: max-content;
   table-layout: auto;
   border-collapse: collapse;
 }
@@ -68,7 +64,7 @@
 .table th {
   background-color: #f8f9fa;
   font-weight: bold;
-  padding: 12px 15px;
+  padding: 5px 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
   position: sticky;
@@ -80,6 +76,22 @@
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   text-align: left;
+}
+
+.table th,
+.table td {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 500px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  border-right: 1px solid #ddd;
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
 }
 
 .table tbody tr:hover {
@@ -103,7 +115,7 @@
   gap: 15px;
   padding: 10px;
   margin-bottom: 15px;
-  flex-wrap: wrap; /* Wrap items on small screens */
+  flex-wrap: wrap;
 }
 
 .search-input {
@@ -112,7 +124,6 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 250px;
-  /* Remove margin-right since gap handles spacing */
   outline: none;
 }
 
@@ -124,7 +135,7 @@
   flex-grow: 1;
 }
 
-/* Adjust button styles to allow them to sit next to each other */
+/* Adjust buttons */
 .changeProductButton {
   color: white;
   border: none;
@@ -133,7 +144,7 @@
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  flex-shrink: 0; /* Prevent button from shrinking */
+  flex-shrink: 0;
   transition: background-color 0.3s, transform 0.2s;
 }
 

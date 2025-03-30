@@ -68,7 +68,7 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
 
       if (hasData) {
         const confirmDelete = window.confirm(
-          `The column "${nameToDelete}" contains data in some products. This data will be permanently deleted. Are you sure you want to delete it?`
+          `The column "${nameToDelete}" contains data in some products. This data will be permanently deleted. Are you sure you want to continue?`
         );
         if (!confirmDelete) return;
       }
@@ -105,7 +105,7 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
               >
                 ✕
               </button>
-              <span>{header}</span>
+              <span className="column-name">{header}</span>
             </div>
           </th>
         ))}

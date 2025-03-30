@@ -140,7 +140,7 @@ function ImportProductsContainer() {
 
   return (
     <div className="import-products-container">
-      {loading && <Loading_Screen message="Uploading products..." />}
+      {loading && <Loading_Screen message="Uploading table..." />}
       <input
         id="fileInput"
         type="file"
@@ -156,7 +156,7 @@ function ImportProductsContainer() {
         onClick={uploadItemsToDatabase}
         disabled={loading || items.length === 0}
       >
-        Upload to Firestore
+        Upload Table
       </button>
 
       <div className="import-products-table-container">

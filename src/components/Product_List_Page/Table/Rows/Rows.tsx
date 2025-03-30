@@ -67,15 +67,17 @@ function Rows({
   };
 
   const deleteProduct = async () => {
-    try {
-      if (tableId && !product.isNew && auth.currentUser?.uid) {
-        await deleteDoc(
-          getProductRef(auth.currentUser.uid, tableId, product.id)
-        );
+    if (window.confirm("Are you sure you want to delete this row?")) {
+      try {
+        if (tableId && !product.isNew && auth.currentUser?.uid) {
+          await deleteDoc(
+            getProductRef(auth.currentUser.uid, tableId, product.id)
+          );
+        }
+        setProductList((prev) => prev.filter((p) => p.id !== product.id));
+      } catch (err) {
+        console.error("Delete error:", err);
       }
-      setProductList((prev) => prev.filter((p) => p.id !== product.id));
-    } catch (err) {
-      console.error("Delete error:", err);
     }
   };
 
@@ -101,7 +103,7 @@ function Rows({
           >
             {isEditing ? "Save" : "Edit"}
           </button>
-          <button onClick={deleteProduct}>Delete</button>
+          {!isEditing && <button onClick={deleteProduct}>Delete</button>}
         </div>
       </td>
     </tr>

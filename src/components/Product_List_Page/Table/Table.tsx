@@ -5,6 +5,7 @@ import Rows from "./Rows/Rows";
 import Column from "./Columns/Columns";
 import "../Product_List.css";
 import { getProductsRef } from "../../../utils/firestorePaths";
+import Loading_Screen from "../../Loading_Screen/Loading_Screen";
 
 interface Product {
   id: string;
@@ -33,6 +34,7 @@ function Table({
   showOpenAI,
 }: TableProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const filteredProducts = productList.filter((product) =>
     headers.some((header) =>
@@ -50,21 +52,31 @@ function Table({
   };
 
   const deleteAllProducts = async () => {
-    const userUid = auth.currentUser?.uid;
-    if (!userUid || !tableId) return;
-    try {
-      const productsRef = getProductsRef(userUid, tableId);
-      const querySnap = await getDocs(productsRef);
-      await Promise.all(querySnap.docs.map((doc) => deleteDoc(doc.ref)));
-      setProductList([]);
-    } catch (err) {
-      console.error("Delete all error:", err);
+    if (
+      window.confirm(
+        "This will permanently delete every row in this table. Are you sure you want to continue?"
+      )
+    ) {
+      const userUid = auth.currentUser?.uid;
+      if (!userUid || !tableId) return;
+      try {
+        setLoading(true);
+        const productsRef = getProductsRef(userUid, tableId);
+        const querySnap = await getDocs(productsRef);
+        await Promise.all(querySnap.docs.map((doc) => deleteDoc(doc.ref)));
+        setProductList([]);
+      } catch (err) {
+        console.error("Delete all error:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <>
       <div className="tableactions">
+        {loading && <Loading_Screen message="Deleting all Rows..." />}
         <input
           type="text"
           placeholder="Search..."
@@ -74,10 +86,10 @@ function Table({
         />
         <div className="action-buttons">
           <button onClick={addNewProduct} className="changeProductButton">
-            Add Product
+            Add Row
           </button>
           <button onClick={deleteAllProducts} className="changeProductButton">
-            Delete All Products
+            Delete All Rows
           </button>
           <button onClick={toggleOpenAI} className="changeProductButton">
             {showOpenAI ? "Hide AI Chat" : "Show AI Chat"}
