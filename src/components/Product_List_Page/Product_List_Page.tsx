@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { db, auth } from "../../config/Firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth } from "../../config/Firebase";
+import { getDocs, query, where } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI_Helper from "./OpenAI_Helper/OpenAI_Helper";
 import Table from "./Table/Table";
 import { useParams } from "react-router-dom";
-import { getProductsCollectionRef } from "../../utils/firestorePaths";
+import { getProductsRef } from "../../utils/firestorePaths";
 
 interface Product {
   id: string;
@@ -33,7 +33,7 @@ function Product_List_Page() {
       if (!userUid || !tableId) return;
 
       try {
-        const collectionRef = getProductsCollectionRef(userUid, tableId);
+        const collectionRef = getProductsRef(userUid, tableId);
 
         const queriedData = query(
           collectionRef,
@@ -90,7 +90,7 @@ function Product_List_Page() {
         headers={headers}
         getProductList={() => {
           if (userUid && tableId) {
-            const collectionRef = getProductsCollectionRef(userUid, tableId);
+            const collectionRef = getProductsRef(userUid, tableId);
 
             const reloadData = async () => {
               try {

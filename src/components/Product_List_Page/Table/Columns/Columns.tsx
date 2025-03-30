@@ -10,8 +10,8 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../../../../config/Firebase";
 import {
-  getColumnsCollectionRef,
-  getProductsCollectionRef,
+  getColumnsRef,
+  getProductsRef,
 } from "../../../../utils/firestorePaths";
 import "./Columns.css";
 
@@ -28,7 +28,7 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
 
-    const colRef = getColumnsCollectionRef(userUid, tableId);
+    const colRef = getColumnsRef(userUid, tableId);
     const docsSnap = await getDocs(colRef);
     const columnNames = docsSnap.docs.map((doc) => doc.data().name);
     setHeaders(columnNames);
@@ -39,7 +39,7 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
 
-    const colRef = getColumnsCollectionRef(userUid, tableId);
+    const colRef = getColumnsRef(userUid, tableId);
     await addDoc(colRef, { name: newColumn.trim(), userId: userUid });
     setNewColumn("");
     fetchColumns();
@@ -49,12 +49,12 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
 
-    const colRef = getColumnsCollectionRef(userUid, tableId);
+    const colRef = getColumnsRef(userUid, tableId);
     const snapshot = await getDocs(colRef);
     const match = snapshot.docs.find((doc) => doc.data().name === nameToDelete);
 
     if (match) {
-      const productsRef = getProductsCollectionRef(userUid, tableId);
+      const productsRef = getProductsRef(userUid, tableId);
       const productsSnap = await getDocs(productsRef);
 
       // Check if any product has a value in the column

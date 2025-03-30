@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
-import { db, auth } from "../../config/Firebase";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { auth } from "../../config/Firebase";
+import { addDoc, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Loading_Screen from "../Loading_Screen/Loading_Screen";
-import {
-  getProductsCollectionRef,
-  getColumnsCollectionRef,
-} from "../../utils/firestorePaths";
+import { getProductsRef, getColumnsRef } from "../../utils/firestorePaths";
 import "./Import_Products.css";
 
 interface Column {
@@ -37,8 +27,8 @@ function ImportProductsContainer() {
     if (tableId) {
       const userUid = auth.currentUser?.uid;
       if (userUid) {
-        const productRef = getProductsCollectionRef(userUid, tableId);
-        const columnRef = getColumnsCollectionRef(userUid, tableId);
+        const productRef = getProductsRef(userUid, tableId);
+        const columnRef = getColumnsRef(userUid, tableId);
         setProductsCollectionRef(productRef);
         setColumnsCollectionRef(columnRef);
       } else {

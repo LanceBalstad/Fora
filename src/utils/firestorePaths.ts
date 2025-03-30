@@ -1,8 +1,11 @@
 import { collection, doc } from "firebase/firestore";
 import { db } from "../config/Firebase";
 
+export const getUserRef = (userId: string) => {
+  return doc(db, "users", userId);
+};
 
-export const getProductsCollectionRef = (userId: string, tableId: string) => {
+export const getProductsRef = (userId: string, tableId: string) => {
   return collection(db, "users", userId, "tables", tableId, "products");
 };
 
@@ -14,10 +17,14 @@ export const getProductRef = (
   return doc(db, "users", userId, "tables", tableId, "products", productId);
 };
 
-export const getColumnsCollectionRef = (userId: string, tableId: string) =>
+export const getColumnsRef = (userId: string, tableId: string) =>
   collection(db, "users", userId, "tables", tableId, "columns");
 
 
 export const getTablesRef = (userId: string) => {
     return collection(db, "users", userId, "tables");
-  };
+};
+
+export const getTableRef = (userId: string, tableId: string) => {
+  return doc(db, "users", userId, "tables", tableId);
+};

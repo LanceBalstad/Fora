@@ -4,7 +4,7 @@ import { auth } from "../../../config/Firebase";
 import Rows from "./Rows/Rows";
 import Column from "./Columns/Columns";
 import "../Product_List.css";
-import { getProductsCollectionRef } from "../../../utils/firestorePaths";
+import { getProductsRef } from "../../../utils/firestorePaths";
 
 interface Product {
   id: string;
@@ -53,7 +53,7 @@ function Table({
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
     try {
-      const productsRef = getProductsCollectionRef(userUid, tableId);
+      const productsRef = getProductsRef(userUid, tableId);
       const querySnap = await getDocs(productsRef);
       await Promise.all(querySnap.docs.map((doc) => deleteDoc(doc.ref)));
       setProductList([]);

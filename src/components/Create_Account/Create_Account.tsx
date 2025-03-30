@@ -2,7 +2,8 @@ import { auth } from "../../config/Firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore"; // Import Firestore methods
+import { getFirestore, setDoc } from "firebase/firestore";
+import { getUserRef } from "../../utils/firestorePaths";
 
 const db = getFirestore(); // Get Firestore instance
 
@@ -24,10 +25,10 @@ function Create_Account() {
       const userId = userCredential.user.uid;
 
       // Add the user to Firestore
-      await setDoc(doc(db, "users", userId), {
+      await setDoc(getUserRef(userId), {
         email: email,
         createdAt: new Date(),
-        // Add any other fields you want to store here (e.g., name, profile information, etc.)
+        // Add any other fields you want to store here
       });
 
       // Navigate to the table list page after creating the account

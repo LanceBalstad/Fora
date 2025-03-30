@@ -59,6 +59,7 @@ h1 {
   border-radius: 20px;
   font-size: 1em;
   transition: 0.3s;
+  max-width: 100px;
 }
 
 .delete-button:hover {

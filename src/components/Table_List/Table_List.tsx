@@ -9,7 +9,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { auth, db } from "../../config/Firebase";
-import { getTablesRef } from "../../utils/firestorePaths";
+import { getTablesRef, getTableRef } from "../../utils/firestorePaths";
 import "./Table_List.css";
 
 interface Table {
@@ -57,7 +57,7 @@ const Table_List_Page: React.FC = () => {
 
     if (userId) {
       try {
-        await addDoc(collection(db, "users", userId, "tables"), {
+        await addDoc(getTablesRef(userId), {
           tableName: newTableName,
           userId: userId,
         });
@@ -74,7 +74,7 @@ const Table_List_Page: React.FC = () => {
   const handleDeleteTable = async (tableId: string) => {
     if (window.confirm("Are you sure you want to delete this table?")) {
       try {
-        await deleteDoc(doc(db, "users", userId!, "tables", tableId));
+        await deleteDoc(getTableRef(userId!, tableId));
         setTables(tables.filter((table) => table.id !== tableId));
       } catch (error) {
         console.error("Error deleting table: ", error);
@@ -136,3 +136,12 @@ const Table_List_Page: React.FC = () => {
 };
 
 export default Table_List_Page;
+
+// loading screen on delete all products
+// biggert login
+// ask if you want to delete all and delete singular products
+// make the delete button on columns closer
+// change from upload to firestore
+// move new header thing aligned
+// Add bnew table button should be on the top
+// have columns ordered
