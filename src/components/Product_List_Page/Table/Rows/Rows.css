@@ -5,7 +5,8 @@
 
 .action-cell {
     width: 200px;
-    /* white-space: nowrap; */
+    background-color: #beddc7 !important;
+    border-right: 1px solid #000000 !important;
 }
 
 .small-action-button {
