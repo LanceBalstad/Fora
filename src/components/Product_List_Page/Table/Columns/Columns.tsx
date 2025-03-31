@@ -96,6 +96,20 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
   return (
     <thead className="thead-light">
       <tr>
+        {/* Leftmost header cell with add new header functionality */}
+        <th>
+          <div className="add-column-container">
+            <input
+              type="text"
+              placeholder="New Header..."
+              value={newColumn}
+              onChange={(e) => setNewColumn(e.target.value)}
+              className="add-column-input"
+            />
+            <button onClick={addColumn}>+</button>
+          </div>
+        </th>
+        {/* Render the rest of the headers */}
         {headers.map((header, idx) => (
           <th key={idx} className="column-header">
             <div className="column-header-content">
@@ -109,18 +123,6 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
             </div>
           </th>
         ))}
-        <th>
-          <div className="add-column-container">
-            <input
-              type="text"
-              placeholder="New Header..."
-              value={newColumn}
-              onChange={(e) => setNewColumn(e.target.value)}
-              className="add-column-input"
-            />
-            <button onClick={addColumn}>+</button>
-          </div>
-        </th>
       </tr>
     </thead>
   );

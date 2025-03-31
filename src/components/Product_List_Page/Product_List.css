@@ -55,10 +55,11 @@
 
 /* Table styling */
 .table {
-  width: 100%;  
+  width: 50%;  
   min-width: max-content;
   table-layout: auto;
   border-collapse: collapse;
+  margin: 0 auto;
 }
 
 .table th {
