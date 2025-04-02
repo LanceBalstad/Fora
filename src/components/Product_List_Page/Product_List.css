@@ -1,62 +1,168 @@
-/* Action Buttons in Rows - Positioned side by side */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  white-space: normal;
+}
+
+.table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Table Actions */
 .tableactions {
   display: flex;
-  justify-content: flex-start; /* Align to the left */
+  justify-content: flex-start;
   align-items: center;
-  gap: 15px; /* Space between elements */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  gap: 15px;
   padding: 10px;
   margin-bottom: 15px;
 }
 
-/* Search Input Styling */
 .search-input {
   padding: 8px 15px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 250px;
-  margin-right: 20px; /* Space between search input and buttons */
+  margin-right: 20px;
   outline: none;
 }
 
-/* Table Row Styling */
+/* Change Product Button Styles */
+.changeProductButton {
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 20%;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.changeProductButton:hover {
+  transform: scale(1.05);
+}
+
+.changeProductButton:active {
+  transform: scale(1);
+}
+
+/* prviously Table.css */
+
+/* Table styling */
+.table {
+  width: 50%;  
+  min-width: max-content;
+  table-layout: auto;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.table th {
+  background-color: #beddc7;
+  font-weight: bold;
+  padding: 5px 10px;
+  text-align: left;
+  border-bottom: 1px solid #000;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  border-right: 1px solid #ddd;
+}
+
+.table th,
+.table td {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 500px;
+  text-align: left;
+}
+
+.table th:first-child,
+.table td:first-child {
+  border-right: 1px solid  #beddc7;
+}
+
+.table thead th:first-child {
+  border-bottom: none !important;
+  border-right: none !important;
+}
+
+.table thead th:first-child + th {
+  border-left: none !important;
+}
+
 .table tbody tr:hover {
   background-color: #f1f1f1;
 }
 
-/* Styling for Table Input Fields */
+/* Styling for inputs within table cells */
 .table td input {
-  width: 100%; /* Ensure the input takes up the full width of the cell */
+  width: 100%;
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 0.9rem;
 }
 
-/* Table Headers Styling */
-.table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
+/* Updated Product_list.css or Table.css for tableactions */
+
+.tableactions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
-  /* Logout button */
-  .changeProductButton {
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 20%;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-  
-  .changeProductButton:hover {
-    transform: scale(1.05);
-  }
-  
-  .changeProductButton:active {
-    transform: scale(1);
-  }
+.search-input {
+  padding: 8px 15px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+  outline: none;
+}
+
+/* Adjust buttons layout */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+
+/* Adjust buttons */
+.changeProductButton {
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.changeProductButton:hover {
+  transform: scale(1.05);
+}
+
+.changeProductButton:active {
+  transform: scale(1);
+}
+

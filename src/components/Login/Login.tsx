@@ -1,9 +1,9 @@
-import "./Login.css";
 import { auth, googleProvider } from "../../config/Firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import "./Login.css";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ export const Login = () => {
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/product_list");
+      navigate("/table_list");
     } catch (err) {
       console.error(err);
     }
@@ -31,7 +31,7 @@ export const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/product_list");
+      navigate("/table_list");
     } catch (err) {
       console.error(err);
 
@@ -47,7 +47,7 @@ export const Login = () => {
             setLoginError("Invalid Credentials");
             break;
           default:
-            setLoginError("Login failed. Please try agian");
+            setLoginError("Login failed. Please try again");
         }
       } else {
         setLoginError("An unexpected error occurred");
@@ -56,41 +56,39 @@ export const Login = () => {
   };
 
   return (
-    <>
-      <section>
-        <div className="form-box">
-          <div className="form">
-            <h2>Login</h2>
-            <div className="error">
-              {loginError && <p className="error-message">{loginError}</p>}
-            </div>
-            <form onSubmit={handleLogin}>
-              <div className="inputbox">
-                <input
-                  type="text"
-                  placeholder="Email..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label htmlFor="">Email Address</label>
-              </div>
-              <div className="inputbox">
-                <input
-                  type="password"
-                  placeholder="Password..."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <label htmlFor="">Password</label>
-              </div>
-              <button type="submit">Login to my account</button>
-            </form>
-            <button onClick={signInWithGoogle}>Sign in with Google</button>
-            <span>Dont have an account? </span>
-            <Link to="/create_account">Create Account</Link>
+    <section className="login-container">
+      <div className="form-box">
+        <div className="form">
+          <h2>Login</h2>
+          <div className="error-container">
+            {loginError && <p className="error-message">{loginError}</p>}
           </div>
+          <form onSubmit={handleLogin}>
+            <div className="inputbox">
+              <input
+                type="text"
+                placeholder="Email..."
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <label>Email Address</label>
+            </div>
+            <div className="inputbox">
+              <input
+                type="password"
+                placeholder="Password..."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <label>Password</label>
+            </div>
+            <button type="submit">Login to my account</button>
+          </form>
+          <button onClick={signInWithGoogle}>Sign in with Google</button>
+          <span>Don't have an account? </span>
+          <Link to="/create_account">Create Account</Link>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };

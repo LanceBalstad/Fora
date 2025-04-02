@@ -23,12 +23,10 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
   const apiUrl = "https://api.openai.com/v1/chat/completions";
   const apiKey = import.meta.env.VITE_API_KEY;
 
-  // Construct product information message (only for internal use)
   const getProductContext = () => {
     if (!productList.length) {
       return "The user has no products in their inventory.";
     }
-
     return `The user has the following products:\n${productList
       .map((product) =>
         columns.map((col) => `${col}: ${product[col]}`).join(", ")
@@ -45,7 +43,7 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
     setIsLoading(true);
 
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -103,8 +101,8 @@ const OpenAI_Helper: React.FC<OpenAI_HelperProps> = ({
           type="text"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          placeholder="Type your question..."
-          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Ask AI about your table..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button onClick={sendMessage}>Send</button>
       </div>

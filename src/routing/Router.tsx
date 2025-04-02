@@ -8,6 +8,7 @@ import Create_Account from "../components/Create_Account/Create_Account";
 import Import_Products from "../components/Import_Products/Import_Products";
 import { auth } from "../config/Firebase";
 import Product_List_Page from "../components/Product_List_Page/Product_List_Page";
+import Table_List_Page from "../components/Table_List/Table_List";
 import Layout from "./Layout";
 
 const isAuthenticated = () => {
@@ -31,10 +32,19 @@ export const Router = createBrowserRouter([
     ),
   },
   {
-    path: "/product_list",
+    path: "/product_list/:tableId",
     element: (
       <Layout>
         <Product_List_Page />
+      </Layout>
+    ),
+  },
+
+  {
+    path: "/table_list",
+    element: (
+      <Layout>
+        <Table_List_Page />
       </Layout>
     ),
   },

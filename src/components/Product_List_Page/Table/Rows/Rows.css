@@ -1,0 +1,14 @@
+.action-buttons-container {
+    display: flex;
+    gap: 5px;
+}
+
+.action-cell {
+    width: 200px;
+    background-color: #beddc7 !important;
+    border-right: 1px solid #000000 !important;
+}
+
+td:not(.action-cell) {
+    min-width: 75px; /* adjust the value as needed */
+}
