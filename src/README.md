@@ -15,7 +15,7 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/project-name.git
+   git clone https://github.com/LanceBalstad/Fora.git
 
    ```
 
