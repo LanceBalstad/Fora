@@ -54,4 +54,12 @@
     font-weight: bold;
   }
   
+  .table-name {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+  }
   

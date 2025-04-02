@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { getDocs, addDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../../config/Firebase";
 import { getTablesRef, getTableRef } from "../../utils/firestorePaths";
 import "./Table_List.css";
@@ -60,6 +53,7 @@ const Table_List_Page: React.FC = () => {
         await addDoc(getTablesRef(userId), {
           tableName: newTableName,
           userId: userId,
+          columnsOrder: [],
         });
 
         await fetchTables();
@@ -114,7 +108,7 @@ const Table_List_Page: React.FC = () => {
       )}
 
       {tables.length === 0 ? (
-        <p>No tables found. Create one to start adding products!</p>
+        <p>No tables found...</p>
       ) : (
         <ul className="table-list">
           {tables.map((table) => (

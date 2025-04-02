@@ -60,7 +60,9 @@ export const Login = () => {
       <div className="form-box">
         <div className="form">
           <h2>Login</h2>
-          {loginError && <p className="error-message">{loginError}</p>}
+          <div className="error-container">
+            {loginError && <p className="error-message">{loginError}</p>}
+          </div>
           <form onSubmit={handleLogin}>
             <div className="inputbox">
               <input

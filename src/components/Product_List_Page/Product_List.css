@@ -136,13 +136,14 @@
   outline: none;
 }
 
-/* New container for buttons to ensure they stay adjacent */
+/* Adjust buttons layout */
 .action-buttons {
   display: flex;
   align-items: center;
   gap: 15px;
   flex-grow: 1;
 }
+
 
 /* Adjust buttons */
 .changeProductButton {
