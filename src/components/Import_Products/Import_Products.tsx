@@ -126,6 +126,7 @@ function ImportProductsContainer() {
           ...sanitizedItem,
           userId: userUid,
           tableId: tableId,
+          dateCreated: new Date().toISOString(),
         });
       }
 
