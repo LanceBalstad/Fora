@@ -17,17 +17,10 @@ interface RowProps {
   product: Product;
   headers: string[];
   setProductList: React.Dispatch<React.SetStateAction<Product[]>>;
-  getProductList: (userUid: string) => void;
   tableId: string | undefined;
 }
 
-function Rows({
-  product,
-  headers,
-  setProductList,
-  getProductList,
-  tableId,
-}: RowProps) {
+function Rows({ product, headers, setProductList, tableId }: RowProps) {
   const [isEditing, setIsEditing] = useState(product.id === "new");
   const [editedData, setEditedData] = useState<Product>(product);
 
@@ -52,7 +45,6 @@ function Rows({
         const productRef = getProductRef(userUid, tableId, product.id);
         await updateDoc(productRef, productData);
       }
-      getProductList(userUid);
       setIsEditing(false);
     } catch (err) {
       console.error("Save error:", err);

@@ -17,7 +17,6 @@ interface TableProps {
   setProductList: React.Dispatch<React.SetStateAction<Product[]>>;
   headers: string[];
   setHeaders: React.Dispatch<React.SetStateAction<string[]>>;
-  getProductList: (userUid: string) => void;
   tableId: string | undefined;
   toggleOpenAI: () => void; // New prop for toggling OpenAI_Helper
   showOpenAI: boolean; // Current state of OpenAI_Helper visibility
@@ -28,7 +27,6 @@ function Table({
   setProductList,
   headers,
   setHeaders,
-  getProductList,
   tableId,
   toggleOpenAI,
   showOpenAI,
@@ -46,7 +44,10 @@ function Table({
   );
 
   const addNewProduct = () => {
-    const newProduct: Product = { id: "new" };
+    const newProduct: Product = {
+      id: "new",
+      dateCreated: new Date().toISOString(),
+    };
     headers.forEach((header) => (newProduct[header] = ""));
     setProductList((prev) => [newProduct, ...prev]);
   };
@@ -111,7 +112,6 @@ function Table({
                 product={product}
                 headers={headers}
                 setProductList={setProductList}
-                getProductList={getProductList}
                 tableId={tableId}
               />
             ))}

@@ -95,21 +95,21 @@ function Columns({ headers, setHeaders, tableId }: ColumnsProps) {
     const userUid = auth.currentUser?.uid;
     if (!userUid || !tableId) return;
 
-    // 1. Fetch all columns from the columns collection
+    // Fetch all columns from the columns collection
     const colRef = getColumnsRef(userUid, tableId);
     const colDocsSnap = await getDocs(colRef);
     const fetchedColumns: string[] = colDocsSnap.docs.map(
       (doc) => doc.data().name
     );
 
-    // 2. Fetch the table document to get columnsOrder
+    // Fetch the table document to get columnsOrder
     const tableRef = getTableRef(userUid, tableId);
     const tableSnap = await getDoc(tableRef);
     const columnsOrder: string[] = tableSnap.exists()
       ? tableSnap.data().columnsOrder || []
       : [];
 
-    // 3. Merge the two arrays: preserve order for columns in columnsOrder and append any new columns.
+    // Merge the two arrays: preserve order for columns in columnsOrder and append any new columns.
     const orderedColumns: string[] = [];
     // Add columns that exist in columnsOrder in that order.
     columnsOrder.forEach((colName) => {

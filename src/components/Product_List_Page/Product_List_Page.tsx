@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../../config/Firebase";
-import { getDocs, query, where } from "firebase/firestore";
+import { onSnapshot, orderBy, query } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI_Helper from "./OpenAI_Helper/OpenAI_Helper";
 import Table from "./Table/Table";
 import { useParams } from "react-router-dom";
-import { getProductsRef } from "../../utils/firestorePaths";
+import { getProductsRef, getTableRef } from "../../utils/firestorePaths";
 
 interface Product {
   id: string;
@@ -27,53 +27,43 @@ function Product_List_Page() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch products once user and tableId are both available
+  // Listen to the table document’s columnsOrder for header ordering
   useEffect(() => {
-    const fetchProducts = async () => {
-      if (!userUid || !tableId) return;
-
-      try {
-        const collectionRef = getProductsRef(userUid, tableId);
-
-        const queriedData = query(
-          collectionRef,
-          where("userId", "==", userUid),
-          where("tableId", "==", tableId)
-        );
-
-        const data = await getDocs(queriedData);
-        const filteredData = data.docs.map((doc) => ({
-          ...(doc.data() as Record<string, any>),
-          id: doc.id,
-        })) as Product[];
-
-        setProductList(filteredData);
-
-        // Update headers only if they are empty
-        if (headers.length === 0) {
-          const uniqueHeaders = Array.from(
-            new Set(
-              filteredData.flatMap((product) =>
-                Object.keys(product).filter(
-                  (key) => key !== "userId" && key !== "id" && key !== "tableId"
-                )
-              )
-            )
-          );
-
-          setHeaders((prevHeaders) => [
-            ...new Set([...prevHeaders, ...uniqueHeaders]),
-          ]); // Preserve existing headers
+    if (!userUid || !tableId) return;
+    const tableRef = getTableRef(userUid, tableId);
+    const unsub = onSnapshot(
+      tableRef,
+      (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        if (Array.isArray(data.columnsOrder)) {
+          setHeaders(data.columnsOrder as string[]);
         }
-      } catch (err) {
-        console.error("Error fetching product list:", err);
-      }
-    };
-
-    fetchProducts();
+      },
+      console.error
+    );
+    return () => unsub();
   }, [userUid, tableId]);
 
-  // Function to toggle OpenAI_Helper visibility
+  // Listen to products collection for real-time updates, sorted by dateCreated
+  useEffect(() => {
+    if (!userUid || !tableId) return;
+    const productsRef = getProductsRef(userUid, tableId);
+    const unsub = onSnapshot(
+      query(productsRef, orderBy("dateCreated", "asc")),
+      (snap) => {
+        const updated = snap.docs.map((d) => ({
+          ...(d.data() as any),
+          id: d.id,
+        }));
+        setProductList(updated);
+      },
+      console.error
+    );
+    return () => unsub();
+  }, [userUid, tableId]);
+
+  // Toggle AI helper
   const toggleOpenAI = () => {
     setShowOpenAI((prev) => !prev);
   };
@@ -88,30 +78,6 @@ function Product_List_Page() {
         setProductList={setProductList}
         setHeaders={setHeaders}
         headers={headers}
-        getProductList={() => {
-          if (userUid && tableId) {
-            const collectionRef = getProductsRef(userUid, tableId);
-
-            const reloadData = async () => {
-              try {
-                const queriedData = query(
-                  collectionRef,
-                  where("userId", "==", userUid),
-                  where("tableId", "==", tableId)
-                );
-                const data = await getDocs(queriedData);
-                const filteredData = data.docs.map((doc) => ({
-                  ...(doc.data() as Record<string, any>),
-                  id: doc.id,
-                })) as Product[];
-                setProductList(filteredData);
-              } catch (err) {
-                console.error("Error reloading product list:", err);
-              }
-            };
-            reloadData();
-          }
-        }}
         tableId={tableId}
         toggleOpenAI={toggleOpenAI}
         showOpenAI={showOpenAI}
